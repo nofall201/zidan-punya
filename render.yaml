@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: flask-hoax-detector
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn app:app
+    envVars:
+      - key: FACTCHECK_API_KEY
+        value: AIzaSyAcCUlfc9StM6hm6OyAn1JlAgq9I-BCtsM
+      - key: HF_TOKEN
+        sync: false # Jangan tulis token langsung di sini
