@@ -10,3 +10,4 @@ requests==2.31.0
 beautifulsoup4==4.12.2
 toml==0.10.2
 nltk==3.8.1
+torch==2.1.2
