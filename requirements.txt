@@ -1,3 +1,5 @@
+
+# Basic Flask dependencies
 gunicorn==21.2.0
 Flask==2.3.3
 flask_sqlalchemy==3.0.5
@@ -6,9 +8,15 @@ Flask_Cors==4.0.0
 email_validator==2.0.0
 python-dotenv==1.0.0
 requests==2.31.0
-nltk==3.8.1
-numpy==1.24.3
-transformers==4.30.2
-torch==2.0.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
 beautifulsoup4==4.12.2
 toml==0.10.2
+
+# AI/ML Libraries (add after basic deployment works)
+nltk==3.8.1
+numpy==1.24.3
+
+# PyTorch CPU-only version (lighter)
+torch==2.0.1+cpu --find-links https://download.pytorch.org/whl/torch_stable.html
+
+# Transformers (for NLP)
+transformers==4.30.2
