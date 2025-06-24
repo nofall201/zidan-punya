@@ -16,7 +16,7 @@ nltk==3.8.1
 numpy==1.24.3
 
 # PyTorch CPU-only version (lighter)
-torch==2.0.1+cpu --find-links https://download.pytorch.org/whl/torch_stable.html
+torch==2.0.1
 
 # Transformers (for NLP)
 transformers==4.30.2
