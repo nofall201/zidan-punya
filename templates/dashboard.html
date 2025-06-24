@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify.ai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="header-container">
+        <div class="top-bar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='Image/logo.jpg') }}" alt="Logo">
+            </div>
+
+            <div class="profile-section">
+
+                {% if user %}
+                <div class="profile-container" id="profile-container">
+                    <div class="profile" id="profile-toggle">
+
+                        {% if user.avatar_url and 'placeholder' not in user.avatar_url %}
+                        <img class="profile-avatar" src="{{ user.avatar_url }}" alt="Foto Profil {{ user.username }}">
+                        {% else %}
+                        <img class="profile-avatar"
+                            src="https://avataaars.io/?avatarStyle=Transparent&seed={{ user.username }}"
+                            alt="Avatar Profil {{ user.username }}">
+                        {% endif %}
+
+                        <div class="profile-text">{{ user.username }}</div>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu">
+                        <a href="{{ url_for('profil') }}" class="dropdown-item"><i
+                                class="fas fa-user-edit"></i><span>Lihat Profil</span></a>
+                        <a href="{{ url_for('logout') }}" class="dropdown-item"><i
+                                class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{{ url_for('login') }}" class="profile-link" title="Masuk atau Daftar">
+                    <div class="profile">
+                        <div class="profile-icon-placeholder"><i class="fas fa-user"></i></div>
+                        <div class="profile-text">Masuk</div>
+                    </div>
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <nav class="main-nav" id="main-nav">
+            <div class="nav-menu">
+                <a href="#beranda">BERANDA</a>
+                <a href="#visualisasi">ANALISA</a>
+                <a href="#chatbot-app">FITUR</a>
+                <a href="#contact-section">NEWS</a>
+                <a href="#about-team">ABOUT</a>
+            </div>
+        </nav>
+    </div>
+    <div class="header-spacer"></div>
+
+    <div class="hero-section" id="beranda">
+        <div class="hero-video-wrapper">
+            <video playsinline autoplay loop muted>
+                <source src="{{ url_for('static', filename='Image/verify1.mp4') }}" type="video/mp4" />
+            </video>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-heading">Deteksi Hoax di Sekitar Anda.</h1>
+
+            <div class="hero-community">
+                <div class="community-avatars" id="user-avatars">
+
+
+                </div>
+                <p class="community-text">
+                    Gabung dengan <b id="user-count">...</b> pengguna lainnya...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a href="#chatbot-app" class="button">Deteksi Hoaks</a>
+    </div>
+
+    <!-- GANTI SELURUH BLOK .stats-dashboard ANDA DENGAN INI -->
+    <div class="stats-dashboard" id="visualisasi">
+
+        <!-- BARIS 1, KOLOM 1 -->
+        <div class="stat-card stat-card-split" id="total-users-card">
+            <div class="stat-left">
+                <div class="stat-title">Total Pengguna</div>
+                <div class="stat-value" id="total-users-value">...</div>
+                <div class="stat-growth-container">
+                    <span class="stat-growth-indicator" id="total-users-growth-indicator">
+                        <i class="fas" id="total-users-growth-icon"></i> <span id="total-users-growth-value">...</span>%
+                    </span>
+                    <span class="stat-comparison">vs 30 hari lalu</span>
+                </div>
+            </div>
+            <div class="stat-right">
+                <canvas id="user-growth-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- BARIS 1, KOLOM 2 -->
+        <div class="stat-card gender-distribution-card" id="active-users-gender-card">
+            <div class="card-header-custom">
+                <span class="stat-icon">👤</span>
+                <span class="stat-title">Pengguna Aktif</span>
+            </div>
+            <div class="gender-distribution-body">
+                <div class="chart-container">
+                    <canvas id="gender-doughnut-chart"></canvas>
+                    <div class="chart-center-text">
+                        <span class="center-value" id="total-active-gender-value">...</span>
+                        <span class="center-label">Pengguna Aktif</span>
+                    </div>
+                </div>
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <span class="legend-color-dot" style="background-color: #36A2EB;"></span>
+                        <span class="legend-label">Laki-laki</span>
+                        <span class="legend-value" id="male-active-count">...</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color-dot" style="background-color: #FF6384;"></span>
+                        <span class="legend-label">Perempuan</span>
+                        <span class="legend-value" id="female-active-count">...</span>
+                    </div>
+                    <hr class="legend-divider">
+                    <div class="stat-growth-container">
+                        <span class="stat-growth-indicator" id="gender-chart-growth-indicator">
+                            <i class="fas" id="gender-chart-growth-icon"></i>
+                            <span id="gender-chart-growth-value">...</span>%
+                        </span>
+                        <span class="stat-comparison">vs 2 hari lalu</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BARIS 1 & 2, KOLOM 3 (KARTU TINGGI) -->
+        <div class="stat-card large-card" id="monthly-summary-card">
+            <div class="payment-header">
+                <div class="payment-title">Total Analisis Bulan Ini</div>
+                <div class="payment-amount" id="monthly-total-value">...</div>
+            </div>
+            <div class="chart-legend-custom">
+                <span class="legend-item">
+                    <span class="legend-color-dot" style="background-color: #FF6384;"></span> Hoax
+                </span>
+                <span class="legend-item">
+                    <span class="legend-color-dot" style="background-color: #36A2EB;"></span> Fakta
+                </span>
+            </div>
+            <div class="bar-chart-container">
+                <canvas id="monthly-summary-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- BARIS 2, KOLOM 1 -->
+        <div class="stat-card" id="avg-duration-card">
+            <div class="card-header-custom">
+                <span class="stat-icon">⏱️</span>
+                <span class="stat-title">Rata-rata Durasi Analisis</span>
+            </div>
+            <div class="stat-body-centered">
+                <span class="large-stat-value" id="avg-duration-value">...</span>
+                <span class="stat-unit">milidetik</span>
+            </div>
+            <div class="stat-footer">
+                <div class="stat-growth-container">
+                    <span class="stat-growth-indicator" id="duration-growth-indicator">
+                        <i class="fas" id="duration-growth-icon"></i>
+                        <span id="duration-growth-value">...</span>%
+                    </span>
+                    <span class="stat-comparison">vs 30 hari lalu</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card" id="accuracy-summary-card">
+
+            <div class="card-header-custom">
+                <span class="stat-icon">🎯</span>
+                <span class="stat-title">Akurasi Deteksi Rata-rata</span>
+            </div>
+
+            <div class="accuracy-body">
+                <div class="accuracy-item">
+                    <span class="accuracy-label">Deteksi Hoax</span>
+                    <span class="accuracy-value" id="accuracy-hoax-value">... %</span>
+                </div>
+                <div class="accuracy-item">
+                    <span class="accuracy-label">Deteksi Fakta</span>
+                    <span class="accuracy-value" id="accuracy-fakta-value">... %</span>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <section id="chatbot-app">
+        <div class="section-title-wrapper">
+            <h2 class="section-title"
+                style="font-family: 'Poppins', sans-serif; font-size: 28px; font-weight: 600; color: #333;">CHATBOT AI
+            </h2>
+        </div>
+
+        <div class="app-layout-container" id="chatbot-app-layout">
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <div class="header-actions">
+                        <button class="header-btn active"><span>💬</span><span class="btn-text">Chats</span></button>
+                    </div>
+                    <button class="sidebar-toggle"
+                        id="sidebar-toggle-btn"><span></span><span></span><span></span></button>
+                </div>
+
+                <div class="sidebar-section history">
+                    <h4 class="section-title">CHAT HISTORY</h4>
+                    <ul id="history-list">
+                        {% if history %}
+                        {% for item in history %}
+                        <li>
+                            <a href="#" class="history-item" data-id="{{ item.id }}">
+                                {{ item.input_text[:35] }}{{ '...' if item.input_text|length > 35 else '' }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                        {% else %}
+                        <li id="no-history-placeholder">
+                            <p style="color: #a0a0a0; padding: 0 12px; font-size: 14px;">Belum ada riwayat.</p>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="sidebar-footer">
+                    <button class="new-chat-btn" id="new-chat-btn"><span>+</span> New chat</button>
+                    <div class="user-profile">
+                        <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="User Profile"
+                            onerror="this.onerror=null;this.src='https://placehold.co/40x40/71717a/E0E0E0?text=R';">
+                        <span>{{ user.username if user else 'Guest' }}</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="main-content" id="main-content-area">
+
+                <div id="chat-area">
+                    <div id="initial-content">
+                        <div class="content-header">
+                            <h1>Selamat Datang, {{ user.username if user else 'Pengguna' }}!</h1>
+                            <h2>Siap menganalisis berita?</h2>
+                        </div>
+                        <div class="content-section">
+                            <div class="section-header">
+                                <h3>Contoh Penggunaan</h3>
+                            </div>
+                            <div class="automation-cards">
+                                <div class="automation-card">
+                                    <p>Tempel link berita dari portal online</p>
+                                </div>
+                                <div class="automation-card">
+                                    <p>Ketikkan judul berita yang Anda ragukan</p>
+                                </div>
+                                <div class="automation-card">
+                                    <p>Masukkan isi pesan berantai dari WhatsApp</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="loader" style="display: none; text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin fa-2x" style="color: #8a2be2;"></i>
+                        <p style="margin-top: 1rem; color: #a0a0a0;">Menganalisis...</p>
+                    </div>
+                    <div id="result-container"></div>
+                </div>
+
+                <form class="simple-detector-form" id="detector-form">
+                    <input type="text" id="link-input"
+                        placeholder="Masukkan kalimat, judul berita, atau tempel link di sini..." required />
+                    <button type="submit" id="search-link-btn">Cari</button>
+                </form>
+
+            </main>
+        </div>
+    </section>
+
+
+
+
+    <div class="new-carousel-wrapper" id="contact-section">
+        <div class="new-carousel-header">Sedang Trending Sekarang</div>
+
+        <div class="new-carousel-slide" id="movie-grid">
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/REAL.png') }}" alt="Real" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/tsunami.jpeg') }}" alt="News 1" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Tsunami di Pantai Selatan</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span><span
+                            class="rating-text"> Real</span>
+                    </div>
+                    <p>BMKG mengkonfirmasi tidak ada ancaman tsunami di pantai selatan Jawa...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/HOAX.png') }}" alt="Hoax" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/kebanjiran.jpeg') }}" alt="News 2" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Banjir Merendam Ibu Kota</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span
+                            class="rating-text"> Hoax</span>
+                    </div>
+                    <p>Foto banjir tahun lalu digunakan kembali untuk menyebar kepanikan...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/HOAX.png') }}" alt="Hoax" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/pemerkosaan.jpeg') }}" alt="News 3" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Aksi Kriminalitas Meningkat</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span
+                            class="rating-text"> Hoax</span>
+                    </div>
+                    <p>Berita ini tidak memiliki sumber yang jelas dan data yang tidak valid...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/REAL.png') }}" alt="Real" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/pembunuhan.jpeg') }}" alt="News 4" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Kasus Korupsi Terungkap</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span
+                            class="rating-text"> Real</span>
+                    </div>
+                    <p>KPK berhasil menangkap pejabat tinggi dalam operasi tangkap tangan...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/REAL.png') }}" alt="Real" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/pembunuhan.jpeg') }}" alt="News 5" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Investasi Baru di IKN</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span><span
+                            class="rating-text"> Real</span>
+                    </div>
+                    <p>Investor asing menanamkan modal besar untuk pembangunan infrastruktur...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/HOAX.png') }}" alt="Hoax" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/pemerkosaan.jpeg') }}" alt="News 6" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Lowongan Kerja BUMN Palsu</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span
+                            class="rating-text"> Hoax</span>
+                    </div>
+                    <p>Waspada penipuan! Beredar informasi lowongan kerja yang meminta biaya...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/kebanjiran.jpeg') }}" alt="News 7" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/kebanjiran.jpeg') }}" alt="News 7" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Subsidi BBM Dihapus</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span>&#9734;</span><span
+                            class="rating-text"> Disinformasi</span>
+                    </div>
+                    <p>Pemerintah melakukan penyesuaian, bukan penghapusan total subsidi...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+            <div class="new-card">
+                <div class="new-card-overlay-icon">
+                    <img src="{{ url_for('static', filename='Image/tsunami.jpeg') }}" alt="News 8" />
+                </div>
+                <div class="new-card-image">
+                    <img src="{{ url_for('static', filename='Image/tsunami.jpeg') }}" alt="News 8" />
+                </div>
+                <div class="new-card-content">
+                    <h3>Ekspor Pertanian Meningkat</h3>
+                    <div class="rating">
+                        <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span><span
+                            class="rating-text"> Real</span>
+                    </div>
+                    <p>Data BPS menunjukkan surplus neraca perdagangan dari sektor pertanian...</p>
+                    <button class="watch-now-btn">Baca Selengkapnya</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="team-container" id="about-team">
+        <h2 class="team-title">Tim Kami</h2>
+        <div class="team-carousel-wrapper">
+            <div class="team-carousel">
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="Anggota Tim 1">
+                    <div class="team-card-info">
+                        <h3>PRADIPTA DESKA PRYANDA</h3>
+                        <p>164221108</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='Image/Hadyan.jpg') }}" alt="Anggota Tim 2">
+                    <div class="team-card-info">
+                        <h3>HADYAN ADIRA PERDANA</h3>
+                        <p>164221085</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='Image/Zhiddan.jpg') }}" alt="Anggota Tim 3">
+                    <div class="team-card-info">
+                        <h3>ZHIDDAN ADITYA MAHARDIKA</h3>
+                        <p>164221086</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='Image/Dapa.jpg') }}" alt="Anggota Tim 4">
+                    <div class="team-card-info">
+                        <h3>AROYAN DAFFA PUTRA</h3>
+                        <p>164221104</p>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="Anggota Tim 5">
+                    <div class="team-card-info">
+                        <h3>FADHLURRAHMAN ALTHAF RAPIYADI</h3>
+                        <p>164221102</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Inisialisasi semua fungsionalitas
+            initStickyHeader();
+            initProfileDropdown();
+            initSidebarToggle();
+            initCarousels();
+            initDynamicNavHighlight();
+            loadUserStats();
+            loadUserGrowthCard()
+            loadActiveUserGenderChart();
+            loadAvgDurationCard();
+            loadMonthlySummaryChart();
+            loadAccuracyScores();
+        });
+        // Logika utama untuk detektor hoaks
+        const searchForm = document.getElementById('detector-form');
+        const searchInput = document.getElementById('link-input');
+        const initialContent = document.getElementById('initial-content');
+        const resultContainer = document.getElementById('result-container');
+        const loader = document.getElementById('loader');
+        const historyList = document.getElementById('history-list');
+        const newChatButton = document.getElementById('new-chat-btn');
+        const noHistoryPlaceholder = document.getElementById('no-history-placeholder');
+        const chatArea = document.getElementById('chat-area');
+
+        /**
+         * Mengatur fungsionalitas dropdown pada ikon profil di header.
+         */
+        function toggleDropdown() {
+            const profileContainer = document.querySelector('.profile-container');
+            profileContainer.classList.toggle('active');
+        }
+
+        function toggleClick(card) {
+            // Menambahkan atau menghapus kelas clicked
+            card.classList.toggle('clicked');
+        }
+
+        function initDynamicNavHighlight() {
+            // 1. Ambil semua link navigasi dan semua section yang punya ID
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            const sections = document.querySelectorAll('section[id], div[id]'); // Mengambil section dan div yang punya ID
+
+            // Fungsi pembantu untuk menghapus semua class 'active' dari link
+            const removeAllActiveClasses = () => {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+            };
+
+            // 2. Logika untuk event 'click'
+            // Memberikan feedback instan saat link diklik
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    removeAllActiveClasses();
+                    this.classList.add('active');
+                });
+            });
+
+            // 3. Logika untuk event 'scroll' (menggunakan IntersectionObserver yang efisien)
+            const observerOptions = {
+                root: null, // Menggunakan viewport sebagai area observasi
+                rootMargin: '0px',
+                threshold: 0.5 // Memicu saat 50% dari section terlihat
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    // Jika sebuah section masuk ke dalam viewport
+                    if (entry.isIntersecting) {
+                        // Hapus semua highlight
+                        removeAllActiveClasses();
+
+                        // Dapatkan ID dari section yang terlihat
+                        const sectionId = entry.target.id;
+
+                        // Cari link navigasi yang href-nya cocok dengan ID section
+                        const correspondingLink = document.querySelector(`.nav-menu a[href="#${sectionId}"]`);
+
+                        // Jika link-nya ada, tambahkan class 'active'
+                        if (correspondingLink) {
+                            correspondingLink.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // 4. Mulai "mengawasi" setiap section
+            sections.forEach(section => {
+                // Pastikan hanya section yang relevan yang diawasi
+                const linkExists = document.querySelector(`.nav-menu a[href="#${section.id}"]`);
+                if (linkExists) {
+                    observer.observe(section);
+                }
+            });
+
+            // Logika khusus untuk "HOME" saat berada di paling atas halaman
+            const homeObserver = new IntersectionObserver((entries) => {
+                const heroSection = entries[0];
+                // Jika hero section terlihat atau jika scroll di paling atas
+                if (heroSection.isIntersecting || window.scrollY < 400) {
+                    removeAllActiveClasses();
+                    document.querySelector('.nav-menu a[href="#"]').classList.add('active');
+                }
+            }, { threshold: 0.1 });
+
+            // Awasi hero section untuk state HOME
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                homeObserver.observe(heroSection);
+            }
+        }
+
+
+        // Fungsi UI (showLoader, hideLoader, renderError) tetap sama
+        function showLoader() {
+            initialContent.style.display = 'none';
+            resultContainer.style.display = '';
+            loader.style.display = 'block';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+        }
+
+        function renderError(message) {
+            hideLoader();
+            resultContainer.innerHTML = `<p style="color:#d9534f; text-align:center; padding: 1rem;">${message}</p>`;
+
+        }
+
+        // Fungsi render hasil (TETAP SAMA)
+        function renderResults(data) {
+            hideLoader();
+            const labelClass = data.label.toLowerCase();
+            const probabilityText = `(Probabilitas Hoax: ${(data.prob_hoax * 100).toFixed(2)}%)`;
+
+            let factChecksHtml = '<p style="color: #a0a0a0;">Tidak ada pengecekan fakta eksternal yang ditemukan.</p>';
+            if (data.fact_checks && data.fact_checks.length > 0) {
+                factChecksHtml = data.fact_checks.map(fact => `
+                    <div class="fact-check-card">
+                        <p>"${fact.text}"</p>
+                        <span class="publisher">${fact.publisher}</span> - <span class="rating">${fact.rating}</span>
+                        <br>
+                        <a href="${fact.url}" target="_blank" rel="noopener noreferrer">Lihat Sumber</a>
+                    </div>
+                    `).join('');
+            }
+
+            const resultHtml = `
+                <div class="result-view">
+                    <div class="result-header">
+                        <span class="label ${labelClass}">${data.label}</span>
+                        <span class="probability">${probabilityText}</span>
+                    </div>
+                    <div class="result-section">
+                        <h4>Penjelasan dari AI</h4>
+                        <p class="explanation-text">${data.explanation}</p>
+                    </div>
+                    <div class="result-section">
+                        <h4>Teks yang Dianalisis</h4>
+                        <p><em>"${data.text}"</em></p>
+                    </div>
+                    <div class="result-section">
+                        <h4>Pengecekan Fakta (Google)</h4>
+                        ${factChecksHtml}
+                    </div>
+                </div>`;
+
+            resultContainer.innerHTML = resultHtml;
+            resultContainer.style.display = 'block';
+            resultContainer.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Fungsi ini akan menambahkan item baru ke ATAS daftar riwayat
+        function addHistoryItem(data) {
+            // Hapus placeholder "Belum ada riwayat" jika ada
+            if (noHistoryPlaceholder) {
+                noHistoryPlaceholder.remove();
+            }
+
+            const newHistoryItem = document.createElement('li');
+            const shortText = data.text.length > 35 ? data.text.substring(0, 35) + '...' : data.text;
+            newHistoryItem.innerHTML = `<a href="#" class="history-item" data-id="${data.id}">${shortText}</a>`;
+
+            // .prepend() akan menambahkan ke paling atas
+            historyList.prepend(newHistoryItem);
+        }
+
+        // Fungsi API (predictText dan fetchHistory) tetap sama
+        async function predictText(text) {
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text })
+            });
+            const responseData = await response.json();
+            if (!response.ok) {
+                throw new Error(responseData.error || `HTTP error! status: ${response.status}`);
+            }
+            return responseData;
+        }
+
+        async function fetchHistory(historyId) {
+            const response = await fetch(`/history/${historyId}`);
+            const responseData = await response.json();
+            if (!response.ok) {
+                throw new Error(responseData.error || `HTTP error! status: ${response.status}`);
+            }
+            return responseData;
+        }
+
+        async function handleSearch() {
+            const text = searchInput.value.trim();
+            if (!text) {
+                alert('Silakan masukkan teks berita atau URL terlebih dahulu.');
+                return;
+            }
+            showLoader();
+            try {
+                const data = await predictText(text);
+                renderResults(data);
+                // Panggil fungsi untuk menambahkan ke riwayat secara dinamis
+                addHistoryItem(data);
+                searchInput.value = '';
+            } catch (error) {
+                console.error("Prediction Fetch Error:", error);
+                renderError(error.message || "Gagal memproses permintaan. Silakan coba lagi.");
+            }
+        }
+
+        async function handleHistoryClick(historyId) {
+            showLoader();
+            try {
+                const data = await fetchHistory(historyId);
+                renderResults(data);
+            } catch (error) {
+                console.error("History Fetch Error:", error);
+                renderError(error.message || "Gagal memuat riwayat.");
+            }
+        }
+        async function loadUserStats() {
+            try {
+                // Panggil API di backend Anda
+                const response = await fetch('/api/userstats');
+
+                // Penanganan error jika API gagal atau tidak ditemukan
+                if (!response.ok) {
+                    throw new Error(`Gagal mengambil data: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+
+                // 1. Cari "wadah" yang sudah kita siapkan di HTML menggunakan ID-nya
+                const avatarContainer = document.getElementById('user-avatars');
+
+                // 2. Penting! Kosongkan wadah terlebih dahulu untuk memastikan tidak ada sisa avatar lama
+                avatarContainer.innerHTML = '';
+
+                // 3. Loop data 'avatars' yang diterima dari backend
+                data.avatars.forEach(avatarUrl => {
+                    // 4. BUAT elemen <img> baru dari nol untuk setiap URL
+                    const img = document.createElement('img');
+
+                    // 5. Atur atribut yang diperlukan untuk <img> yang baru dibuat
+                    img.src = avatarUrl;            // Isi 'src' dengan URL dari database
+                    img.className = 'avatar';       // Beri kelas untuk styling CSS
+                    img.alt = 'Avatar Pengguna';    // Beri alt text
+
+                    // 6. Masukkan <img> yang sudah jadi ke dalam wadah
+                    avatarContainer.appendChild(img);
+                });
+
+                // Opsional: Update juga jumlah pengguna jika ada elemennya
+                const userCountElement = document.getElementById('user-count');
+                if (userCountElement) {
+                    userCountElement.textContent = data.total_users;
+                }
+
+            } catch (error) {
+                console.error("Gagal memuat statistik pengguna:", error);
+                // Anda bisa menampilkan pesan error di UI jika perlu
+            }
+        }
+        // Optional: refresh tiap 30 detik
+        setInterval(loadUserStats, 30000);
+        async function loadUserGrowthCard() {
+            // Ambil semua elemen yang kita butuhkan
+            const valueEl = document.getElementById('total-users-value');
+            const growthIconEl = document.getElementById('total-users-growth-icon');
+            const growthValueEl = document.getElementById('total-users-growth-value');
+            const growthIndicatorEl = growthIconEl.parentElement;
+            const chartCanvas = document.getElementById('user-growth-chart');
+
+            try {
+                const response = await fetch('/api/user-growth-stats');
+                if (!response.ok) throw new Error('Gagal memuat data pertumbuhan');
+
+                const data = await response.json();
+
+                // Update Angka
+                valueEl.textContent = data.total_users.toLocaleString('id-ID');
+                growthValueEl.textContent = Math.abs(data.percentage_change).toFixed(1);
+
+                // Update Indikator Panah & Warna
+                growthIndicatorEl.classList.remove('increase', 'decrease');
+                growthIconEl.classList.remove('fa-arrow-up', 'fa-arrow-down');
+
+                if (data.percentage_change > 0) {
+                    growthIndicatorEl.classList.add('increase');
+                    growthIconEl.classList.add('fa-arrow-up');
+                } else if (data.percentage_change < 0) {
+                    growthIndicatorEl.classList.add('decrease');
+                    growthIconEl.classList.add('fa-arrow-down');
+                }
+
+                // Render Grafik
+                // Hancurkan grafik lama jika ada untuk mencegah error saat refresh
+                if (window.userGrowthChart instanceof Chart) {
+                    window.userGrowthChart.destroy();
+                }
+
+                const ctx = chartCanvas.getContext('2d');
+                window.userGrowthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.chart_labels,
+                        datasets: [{
+                            label: 'Pendaftar Baru',
+                            data: data.chart_data,
+                            borderColor: '#8a2be2', // Warna ungu
+                            borderWidth: 2,
+                            fill: true,
+                            backgroundColor: 'rgba(138, 43, 226, 0.1)',
+                            tension: 0.4, // Membuat garis melengkung
+                            pointRadius: 0 // Menghilangkan titik pada data
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { display: false }, // Sembunyikan sumbu Y
+                            x: { display: false }  // Sembunyikan sumbu X
+                        },
+                        plugins: {
+                            legend: { display: false }, // Sembunyikan legenda
+                            tooltip: { enabled: false } // Matikan tooltip saat hover
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index',
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error(error);
+                valueEl.textContent = 'N/A';
+            }
+        }
+        async function loadActiveUserGenderChart() {
+            // Ambil semua elemen yang kita butuhkan
+            const totalValueEl = document.getElementById('total-active-gender-value');
+            const maleCountEl = document.getElementById('male-active-count');
+            const femaleCountEl = document.getElementById('female-active-count');
+            const chartCanvas = document.getElementById('gender-doughnut-chart');
+            const growthIconEl = document.getElementById('gender-chart-growth-icon');
+            const growthValueEl = document.getElementById('gender-chart-growth-value');
+            const growthIndicatorEl = document.getElementById('gender-chart-growth-indicator');
+
+            try {
+                // 1. JAVASCRIPT: "Pelayan mengambil hidangan dari Dapur (Backend)"
+                const response = await fetch('/api/active-user-gender-stats');
+                if (!response.ok) throw new Error('Gagal memuat data gender');
+
+                const data = await response.json(); // Data JSON dari backend sekarang ada di sini
+
+                // 2. JAVASCRIPT: "Menata teks dan angka di atas meja"
+                totalValueEl.textContent = data.total_active.toLocaleString('id-ID');
+                maleCountEl.textContent = data.male_active.toLocaleString('id-ID');
+                femaleCountEl.textContent = data.female_active.toLocaleString('id-ID');
+
+                // Logika untuk indikator pertumbuhan (menggunakan data 'percentage_change')
+                if (typeof data.percentage_change === 'number' && !isNaN(data.percentage_change)) {
+                    growthValueEl.textContent = Math.abs(data.percentage_change).toFixed(1);
+                    growthIndicatorEl.classList.remove('increase', 'decrease');
+                    growthIconEl.classList.remove('fa-arrow-up', 'fa-arrow-down');
+                    if (data.percentage_change > 0) {
+                        growthIndicatorEl.classList.add('increase');
+                        growthIconEl.classList.add('fa-arrow-up');
+                    } else if (data.percentage_change < 0) {
+                        growthIndicatorEl.classList.add('decrease');
+                        growthIconEl.classList.add('fa-arrow-down');
+                    }
+                } else {
+                    growthValueEl.textContent = '0.0';
+                }
+
+                // 3. JAVASCRIPT: "Menggambar visual utama (Grafik Donat)"
+                // Hancurkan instance grafik lama jika ada untuk mencegah error
+                if (window.genderChart instanceof Chart) {
+                    window.genderChart.destroy();
+                }
+
+                // Pastikan elemen canvas ada sebelum menggambar
+                if (chartCanvas) {
+                    const ctx = chartCanvas.getContext('2d');
+                    window.genderChart = new Chart(ctx, {
+                        type: 'doughnut', // Tipe grafik
+                        data: {
+                            labels: ['Laki-laki', 'Perempuan'],
+                            datasets: [{
+                                label: 'Pengguna Aktif',
+                                // Menggunakan data dari backend untuk ukuran segmen grafik
+                                data: [data.male_active, data.female_active],
+                                backgroundColor: [
+                                    '#36A2EB', // Biru untuk Laki-laki
+                                    '#FF6384'  // Pink untuk Perempuan
+                                ],
+                                borderColor: 'rgba(255, 255, 255, 0)',
+                                cutout: '75%',
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            // Opsi untuk membuat grafik menjadi setengah lingkaran
+                            rotation: -90,
+                            circumference: 180,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: { enabled: true }
+                            }
+                        }
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error memuat grafik gender:", error);
+                if (totalValueEl) totalValueEl.textContent = 'N/A';
+            }
+        }
+        async function loadAvgDurationCard() {
+            // Ambil semua elemen yang kita butuhkan, termasuk yang baru
+            const valueEl = document.getElementById('avg-duration-value');
+            const growthIconEl = document.getElementById('duration-growth-icon');
+            const growthValueEl = document.getElementById('duration-growth-value');
+            const growthIndicatorEl = document.getElementById('duration-growth-indicator');
+
+            // Set status loading awal
+            valueEl.textContent = '...';
+            growthValueEl.textContent = '...';
+
+            try {
+                // Panggil API endpoint yang sudah diupdate
+                const response = await fetch('/api/avg-duration-stats');
+                if (!response.ok) throw new Error('Gagal mengambil data durasi');
+
+                const data = await response.json();
+
+                // Update nilai rata-rata durasi
+                valueEl.textContent = data.avg_duration_ms.toLocaleString('id-ID');
+
+                // --- LOGIKA BARU UNTUK INDIKATOR PERBANDINGAN ---
+                if (typeof data.percentage_change === 'number' && !isNaN(data.percentage_change)) {
+                    growthValueEl.textContent = Math.abs(data.percentage_change).toFixed(1);
+
+                    growthIndicatorEl.classList.remove('increase', 'decrease');
+                    growthIconEl.classList.remove('fa-arrow-up', 'fa-arrow-down');
+
+                    // Logika terbalik: penurunan (negatif) berarti lebih cepat -> HIJAU
+                    if (data.percentage_change < 0) {
+                        growthIndicatorEl.classList.add('increase'); // Kelas 'increase' untuk style hijau
+                        growthIconEl.classList.add('fa-arrow-down'); // Ikon panah ke bawah menandakan penurunan nilai
+                    }
+                    // Kenaikan (positif) berarti lebih lambat -> MERAH
+                    else if (data.percentage_change > 0) {
+                        growthIndicatorEl.classList.add('decrease'); // Kelas 'decrease' untuk style merah
+                        growthIconEl.classList.add('fa-arrow-up'); // Ikon panah ke atas menandakan kenaikan nilai
+                    }
+                } else {
+                    growthValueEl.textContent = '0.0';
+                }
+
+            } catch (error) {
+                console.error(error);
+                valueEl.textContent = 'N/A';
+            }
+        }
+
+        async function loadMonthlySummaryChart() {
+            // Ambil elemen yang kita butuhkan
+            const totalValueEl = document.getElementById('monthly-total-value');
+            const chartCanvas = document.getElementById('monthly-summary-chart');
+
+            // Pengaman jika elemen tidak ditemukan di halaman
+            if (!totalValueEl || !chartCanvas) return;
+
+            try {
+                const response = await fetch('/api/monthly-prediction-summary');
+                if (!response.ok) throw new Error('Gagal memuat ringkasan bulanan');
+
+                const data = await response.json();
+
+                // Update total prediksi bulanan
+                totalValueEl.textContent = data.total_predictions_month.toLocaleString('id-ID');
+
+                // Render Grafik Bar
+                // Hancurkan instance grafik lama jika ada untuk mencegah error saat refresh
+                if (window.monthlyChart instanceof Chart) {
+                    window.monthlyChart.destroy();
+                }
+
+                const ctx = chartCanvas.getContext('2d');
+                window.monthlyChart = new Chart(ctx, {
+                    type: 'bar', // Tipe grafik adalah bar chart
+                    data: {
+                        labels: data.weekly_summary.labels, // ["Minggu 1", "Minggu 2", ...]
+                        datasets: [
+                            {
+                                label: 'Hoax',
+                                data: data.weekly_summary.hoax_counts, // Data jumlah hoax per minggu
+                                backgroundColor: '#FF6384', // Warna Merah/Pink untuk Hoax
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Fakta',
+                                data: data.weekly_summary.fakta_counts, // Data jumlah fakta per minggu
+                                backgroundColor: '#36A2EB', // Warna Biru untuk Fakta
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false // Legenda sudah kita buat sendiri di HTML
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: false, // false = bar berdampingan, true = bar ditumpuk
+                                grid: {
+                                    display: false // Hilangkan garis grid vertikal
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: '#e9ecef' // Warna garis grid horizontal
+                                }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error memuat grafik ringkasan bulanan:", error);
+                totalValueEl.textContent = 'N/A';
+            }
+        }
+
+        async function loadAccuracyScores() {
+            const hoaxValueEl = document.getElementById('accuracy-hoax-value');
+            const faktaValueEl = document.getElementById('accuracy-fakta-value');
+
+            // Pengaman jika elemen tidak ada
+            if (!hoaxValueEl || !faktaValueEl) return;
+
+            try {
+                const response = await fetch('/api/accuracy-by-label');
+                if (!response.ok) throw new Error('Gagal memuat skor akurasi');
+
+                const data = await response.json();
+
+                // Update nilai akurasi untuk Hoax dan Fakta
+                hoaxValueEl.textContent = `${data.avg_accuracy_hoax.toFixed(1)} %`;
+                faktaValueEl.textContent = `${data.avg_accuracy_fakta.toFixed(1)} %`;
+
+            } catch (error) {
+                console.error("Error memuat skor akurasi:", error);
+                hoaxValueEl.textContent = 'N/A';
+                faktaValueEl.textContent = 'N/A';
+            }
+        }
+
+
+        // Reset UI (TETAP SAMA)
+        function resetUI() {
+            resultContainer.innerHTML = '';
+            loader.style.display = 'none';
+            initialContent.style.display = 'block'; // Tampilkan kembali konten awal
+            searchInput.value = '';
+            chatArea.scrollTop = 0; // Kembali ke atas
+        }
+
+
+        // Event listeners (TETAP SAMA)
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            handleSearch();
+        });
+
+        historyList.addEventListener('click', (e) => {
+            if (e.target && e.target.matches('a.history-item')) {
+                e.preventDefault();
+                const historyId = e.target.getAttribute('data-id');
+                handleHistoryClick(historyId);
+            }
+        });
+
+        newChatButton.addEventListener('click', resetUI);
+
+        /**
+         * Mengatur fungsionalitas sticky header.
+         * Header akan menempel di atas layar saat halaman di-scroll melewati titik tertentu.
+         */
+        function initStickyHeader() {
+            const nav = document.getElementById("main-nav");
+            const headerContainer = document.querySelector(".header-container");
+
+            if (!nav || !headerContainer) return; // Keluar jika elemen tidak ditemukan
+
+            const stickyPoint = headerContainer.offsetTop + headerContainer.offsetHeight;
+
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > stickyPoint) {
+                    nav.classList.add("is-sticky");
+                } else {
+                    nav.classList.remove("is-sticky");
+                }
+            });
+        }
+
+
+        /**
+         * Mengatur fungsionalitas untuk tombol buka/tutup (toggle) sidebar.
+         */
+        function initSidebarToggle() {
+            const toggleButton = document.getElementById("sidebar-toggle-btn");
+            const sidebar = document.querySelector(".sidebar");
+
+            if (!toggleButton || !sidebar) return;
+
+            toggleButton.addEventListener("click", () => {
+                sidebar.classList.toggle("collapsed");
+            });
+        }
+
+        /**
+         * Menginisialisasi carousel utama dan carousel berita/film.
+         */
+        function initCarousels() {
+            // Inisialisasi untuk carousel utama (jika ada di halaman)
+            const mainCarouselContainer = document.getElementById("main-carousel-slide");
+            if (mainCarouselContainer) {
+                createCarousel({
+                    slideContainer: mainCarouselContainer,
+                    cardSelector: ".carousel-slide .card",
+                    interval: 4000 // Interval 4 detik
+                });
+            }
+
+            // Inisialisasi untuk carousel berita/film
+            const movieCarouselContainer = document.getElementById("movie-carousel-slide");
+            if (movieCarouselContainer) {
+                createCarousel({
+                    slideContainer: movieCarouselContainer,
+                    cardSelector: ".new-carousel-slide .new-card",
+                    interval: 5000 // Interval 5 detik agar tidak sama persis
+                });
+            }
+        }
+        function initProfileDropdown() {
+            const profileToggle = document.getElementById('profile-toggle');
+            const profileContainer = document.getElementById('profile-container');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+
+            if (!profileToggle || !profileContainer || !dropdownMenu) {
+                console.error("Elemen dropdown tidak ditemukan!");
+                return;
+            }
+
+            // Event focus pada elemen profil
+            profileToggle.addEventListener('focus', function () {
+                profileContainer.classList.add('active');
+                dropdownMenu.classList.add('active');
+            });
+
+            // Event blur pada elemen profil (menghilangkan fokus)
+            profileToggle.addEventListener('blur', function () {
+                profileContainer.classList.remove('active');
+                dropdownMenu.classList.remove('active');
+            });
+
+            // Menutup dropdown jika klik di luar elemen
+            document.addEventListener('click', function (e) {
+                if (!profileContainer.contains(e.target)) {
+                    profileContainer.classList.remove('active');
+                    dropdownMenu.classList.remove('active');
+                }
+            });
+        }
+
+
+        /**
+         * Fungsi reusable untuk membuat carousel otomatis.
+         * @param {object} options - Opsi untuk carousel.
+         * @param {HTMLElement} options.slideContainer - Elemen kontainer yang akan digeser.
+         * @param {string} options.cardSelector - Selector CSS untuk menemukan setiap kartu di dalam carousel.
+         * @param {number} options.interval - Durasi dalam milidetik untuk setiap pergeseran.
+         */
+        function createCarousel(options) {
+            const { slideContainer, cardSelector, interval } = options;
+
+            const cards = slideContainer.querySelectorAll(cardSelector);
+            if (cards.length === 0) return; // Exit if no cards
+
+            let cardWidth = cards[0].offsetWidth + parseInt(getComputedStyle(cards[0]).marginRight); // Width of card + margin
+            let slideIndex = 0;
+
+            // Main function to shift the carousel
+            function moveSlide() {
+                slideIndex++;
+
+                // Move the slide
+                slideContainer.style.transform = `translateX(-${slideIndex * cardWidth}px)`;
+                slideContainer.style.transition = 'transform 1s ease-in-out'; // Smooth transition
+
+                // Logic to loop back to the beginning seamlessly
+                slideContainer.addEventListener('transitionend', () => {
+                    if (slideIndex >= cards.length) {
+                        slideContainer.style.transition = 'none'; // Disable transition for reset
+                        slideIndex = 0;
+                        slideContainer.style.transform = `translateX(0)`; // Reset position
+                    }
+                }, { once: true }); // Only run once per transition
+            }
+
+            // Run carousel at regular intervals
+            setInterval(moveSlide, interval);
+
+            // Recalculate card width on window resize for responsiveness
+            window.addEventListener("resize", () => {
+                cardWidth = cards[0].offsetWidth + parseInt(getComputedStyle(cards[0]).marginRight);
+            });
+        }
+
+
+
+    </script>
+</body>
+
+</html>

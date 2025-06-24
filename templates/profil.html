@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - Verify.ai</title>
+    <link href="{{ url_for('static', filename='css/dist/output.css') }}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* --- Variabel Warna Tema --- */
+        :root {
+            --bg-dark-primary: #0D1B2A;
+            --bg-dark-secondary: #1B263B;
+            --accent-blue: #41EAD4;
+            --accent-orange: #F7B801;
+            --text-primary: #E0E1DD;
+            --text-secondary: #778DA9;
+            --border-color: #4A5568;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: var(--bg-dark-primary);
+            color: var(--text-primary);
+        }
+
+        /* --- Styling Card Utama --- */
+        .profil-card {
+            background-color: var(--bg-dark-secondary);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        /* --- Styling Avatar --- */
+        .profil-avatar-container {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-edit-icon {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background-color: var(--bg-dark-secondary);
+            border-radius: 9999px;
+            padding: 6px;
+            border: 1px solid var(--accent-blue);
+            cursor: pointer;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-edit-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--accent-blue);
+        }
+
+        .profil-avatar-container img {
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 2px solid #4A5568;
+        }
+
+        /* --- Styling Teks --- */
+        .profil-card h1,
+        .profil-card h3 {
+            color: var(--text-primary);
+        }
+
+        .profil-card h2.username-gradient {
+            background: linear-gradient(90deg, var(--accent-blue), var(--text-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        .profil-card .text-muted {
+            color: var(--text-secondary);
+        }
+
+        .profil-card .text-highlight {
+            color: var(--text-primary);
+        }
+
+        /* --- Styling Badge --- */
+        .verification-badge {
+            background-color: rgba(65, 234, 212, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            padding: 5px 10px;
+            border-radius: 50px;
+        }
+
+        /* --- Styling Form Input --- */
+        .themed-input {
+            background-color: var(--bg-dark-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .themed-input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(65, 234, 212, 0.2);
+            background-color: var(--bg-dark-secondary);
+        }
+
+        .themed-input[readonly] {
+            background-color: #152031;
+        }
+
+        label {
+            color: var(--text-secondary);
+        }
+
+        /* --- Styling Tombol --- */
+        .btn {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-orange {
+            background-color: var(--accent-orange);
+            color: #111;
+        }
+
+        .btn-orange:hover {
+            background-color: #ffc928;
+        }
+
+        .btn-outline-blue {
+            background-color: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .btn-outline-blue:hover {
+            background-color: var(--accent-blue);
+            color: var(--bg-dark-primary);
+        }
+
+        /* Tombol Edit di dalam form */
+        .edit-btn {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--accent-blue);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            color: var(--text-primary);
+        }
+
+        /* --- Dropdown Profile --- */
+        .dropdown-menu {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+            position: absolute;
+            top: 30px;
+            right: 0;
+            width: 150px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-dropdown:hover .dropdown-menu {
+            display: block;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="profil-card p-8 rounded-2xl shadow-lg max-w-4xl w-full mx-4">
+        <div class="profil-avatar-container mb-4">
+            <img class="rounded-full w-full h-full object-cover border-2 border-gray-600" src="{{ url_for('static', filename=user.avatar_url or 'images/default_avatar.png') }}" alt="User Avatar">
+            <div class="avatar-edit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
+                    <path fill-rule="evenodd" d="M.664 6.588A2 2 0 012.426 5h1.123a2 2 0 011.754.98L6.4 7.5h7.2l1.097-1.52a2 2 0 011.754-.98h1.123a2 2 0 011.762 1.588l.5 2.5A2 2 0 0118.324 11H1.676a2 2 0 01-1.012-1.912l.5-2.5zM10 15a5 5 0 100-10 5 5 0 000 10z" clip-rule="evenodd" />
+                </svg>
+            </div>
+        </div>
+
+        <h1 class="text-2xl font-bold mb-2">My profile</h1>
+
+        <div class="flex justify-between items-start mb-8">
+            <div>
+                <h2 class="text-3xl font-bold username-gradient">
+                    {{ user.first_name or user.username }} {{ user.last_name or '' }}
+                </h2>
+                <div class="flex items-center space-x-2 text-muted mt-2">
+                    <span>PayPaddy Unique Tag:</span>
+                    <span class="font-semibold text-highlight">{{ user.unique_tag or 'N/A' }}</span>
+                </div>
+                <span class="mt-4 inline-block verification-badge text-sm font-medium px-4 py-1.5 rounded-full">{{ user.verification_level }}</span>
+            </div>
+            <div class="flex items-center space-x-2 text-highlight font-semibold">
+                <span class="text-2xl">🇳🇬</span>
+                <span>{{ user.country_code }}</span>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('profil') }}">
+            <input type="hidden" name="action" value="update_profil" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                <div>
+                    <label for="first_name" class="block text-xs font-bold uppercase mb-2">First Name</label>
+                    <div class="relative">
+                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name or '' }}" readonly data-original-value="{{ user.first_name or '' }}" class="themed-input w-full p-3 rounded-lg focus:outline-none pr-20" />
+                        <button type="button" class="edit-btn" onclick="toggleEdit(this, 'first_name')">Edit</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="last_name" class="block text-xs font-bold uppercase mb-2">Last Name</label>
+                    <div class="relative">
+                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name or '' }}" readonly data-original-value="{{ user.last_name or '' }}" class="themed-input w-full p-3 rounded-lg focus:outline-none pr-20" />
+                        <button type="button" class="edit-btn" onclick="toggleEdit(this, 'last_name')">Edit</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="email" class="block text-xs font-bold uppercase mb-2">Email Address</label>
+                    <div class="relative">
+                        <input type="email" id="email" name="email" value="{{ user.email }}" readonly data-original-value="{{ user.email }}" class="themed-input w-full p-3 rounded-lg focus:outline-none pr-20" />
+                        <button type="button" class="edit-btn" onclick="toggleEdit(this, 'email')">Edit</button>
+                    </div>
+                </div>
+                <div>
+                    <label for="phone_number" class="block text-xs font-bold uppercase mb-2">Phone Number</label>
+                    <div class="relative">
+                        <input type="tel" id="phone_number" name="phone_number" value="{{ user.phone_number or '' }}" readonly data-original-value="{{ user.phone_number or '' }}" class="themed-input w-full p-3 rounded-lg focus:outline-none pr-20" />
+                        <button type="button" class="edit-btn" onclick="toggleEdit(this, 'phone_number')">Edit</button>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end mt-8">
+                <button type="submit" class="btn btn-orange font-bold py-3 px-10 rounded-lg">
+                    Update profile
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function toggleEdit(button, inputId) {
+            const inputField = document.getElementById(inputId);
+            const isReadOnly = inputField.hasAttribute("readonly");
+
+            if (isReadOnly) {
+                inputField.removeAttribute("readonly");
+                inputField.focus();
+                button.textContent = "Cancel";
+            } else {
+                inputField.setAttribute("readonly", true);
+                inputField.value = inputField.dataset.originalValue;
+                button.textContent = "Edit";
+            }
+        }
+    </script>
+</body>
+
+</html>

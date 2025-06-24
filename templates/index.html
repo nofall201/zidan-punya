@@ -1,0 +1,2078 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify.ai</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+        }
+
+        .header-container {
+            position: relative;
+            /* Menjadi konteks untuk elemen absolute di dalamnya */
+            height: 84px;
+            /* Tinggi total header, sesuaikan jika perlu */
+            background-color: #f8f8f8;
+            /* Warna latar belakang awal */
+        }
+
+        /* Spacer untuk mendorong konten ke bawah */
+        .header-spacer {
+            height: 20px;
+            /* Tingginya HARUS SAMA dengan .header-container */
+        }
+
+        /* Baris atas untuk Logo dan Profil */
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            box-sizing: border-box;
+            /* Agar padding tidak menambah lebar */
+            z-index: 1001;
+            /* Di atas navigasi saat tidak sticky */
+        }
+
+        /* Navigasi Utama */
+        .main-nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            /* Mengisi tinggi .header-container */
+            z-index: 1000;
+            transition: all 0.3s ease;
+            /* Transisi halus */
+        }
+
+        /* KELAS BARU: Ini yang akan ditambahkan JavaScript saat scroll */
+        .main-nav.is-sticky {
+            position: fixed;
+            /* Mengubah posisi menjadi fixed saat scroll */
+            top: 0;
+            height: auto;
+            /* Tinggi menyesuaikan padding saat sticky */
+            padding: 8px 0;
+            /*background-color: rgba(255, 255, 255, 0.85);*/
+            /*backdrop-filter: blur(10px);*/
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1002;
+            /* Paling atas saat sticky */
+        }
+
+        /* Aturan untuk .nav-menu dan isinya tetap sama */
+        .nav-menu {
+            display: flex;
+            /*background: rgba(255, 255, 255, 0.2);*/
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 5px;
+        }
+
+        .logo {
+            left: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            right: 40px;
+        }
+
+        .profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+
+        .profile-text {
+            font-size: 14px;
+            color: #333;
+            margin-top: 5px;
+        }
+
+        nav {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .nav-menu {
+            display: flex;
+            /* Agar link di dalamnya tetap berjajar rapi */
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 5px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            /* Warna teks default */
+            font-size: 18px;
+            margin: 0 10px;
+            /* Kurangi margin horizontal antar item jika ingin lebih rapat */
+            padding: 8px 18px;
+            /* Tambahkan padding untuk membuat area background hover */
+            border-radius: 25px;
+            /* Border-radius untuk membuat sudut membulat */
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Transisi halus untuk hover */
+            display: inline-block;
+            /* Penting agar padding dan border-radius bekerja */
+        }
+
+        /* Styling saat di-hover */
+        nav a:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            /* Latar belakang gelap transparan saat hover */
+            color: white;
+            /* Warna teks putih saat hover */
+        }
+
+        /* Jika Anda ingin item "HOME" atau item aktif memiliki style default yang sama */
+        /* Anda bisa menambahkan kelas "active" ke item tersebut di HTML */
+        /* Contoh: <a href="#" class="active">HOME</a> */
+        nav a.active {
+            background-color: rgba(0, 0, 0, 0.9);
+            /* Latar belakang lebih gelap untuk item aktif */
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 120px 20px 40px;
+        }
+
+        .heading {
+            font-size: 36px;
+            color: #4e73df;
+            font-weight: 600;
+        }
+
+        .cta {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .input-box {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .input-box input {
+            padding: 10px;
+            width: 50%;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .input-box button {
+            background-color: #4e73df;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+
+        .carousel-container {
+            max-width: 1200px;
+            height: 300px;
+            /* Diperkecil dari 400px menjadi 300px */
+            overflow: hidden;
+            position: relative;
+            margin-top: 100px;
+            margin: 100px auto 60px auto;
+            margin-bottom: 60px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            /* Hapus padding: 0 20px; atau sesuaikan jika perlu */
+            padding: 0;
+            /* Menghilangkan padding horizontal agar carousel bisa full width jika diinginkan */
+        }
+
+        /* --- CSS UNTUK HERO SECTION --- */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0px auto 0 auto;
+            /* Margin atas 120px, bawah 0, kiri-kanan auto */
+            padding: 0;
+            background-color: #1a1a1a;
+            /* Warna latar belakang sangat gelap */
+            border-radius: 20px;
+            /* Sudut melengkung agar serasi */
+            color: #f0f0f0;
+            height: 450px;
+            /* Atur tinggi sesuai keinginan Anda */
+            /* Warna teks default (putih pudar) */
+            text-align: center;
+            box-sizing: border-box;
+            background-image: url("{{ url_for('static', filename='Image/verify1.mp4') }}");
+            background-size: cover;
+            background-position: center center;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            /* Warna hitam dengan transparansi */
+            z-index: 1;
+        }
+
+        .hero-video-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-video-wrapper video {
+            display: block;
+            object-fit: cover;
+            /* Atau 'contain' jika Anda ingin video sepenuhnya terlihat */
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Overlay gelap (opsional) */
+        .hero-video-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            /* Sesuaikan tingkat kegelapan */
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            color: #ffffff;
+            text-align: center;
+            /* Atur padding agar konten tidak tertutup video */
+            padding: 20px;
+            transform: translateY(20px);
+        }
+
+        .hero-heading {
+            font-size: 52px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 20px 0;
+        }
+
+        .hero-subheading {
+            max-width: 700px;
+            /* Batasi lebar teks agar mudah dibaca */
+            margin: 0 auto 30px auto;
+            /* Memusatkan blok paragraf */
+            font-size: 18px;
+            line-height: 1.6;
+            color: #cccccc;
+            /* Warna abu-abu terang agar tidak terlalu menonjol */
+        }
+
+        .hero-community {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            /* Jarak antara grup avatar dan teks */
+            transform: translateY(-30px);
+            /* Sesuaikan nilai ini agar naik lebih atau kurang */
+            margin-top: 15px;
+            /* Berikan sedikit jarak dari sub-heading */
+        }
+
+        .community-avatars {
+            display: flex;
+        }
+
+        .community-avatars img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            /* Trik untuk membuat gambar tumpang tindih */
+            margin-left: -15px;
+        }
+
+        /* Hilangkan margin negatif untuk gambar pertama */
+        .community-avatars img:first-child {
+            margin-left: 0;
+        }
+
+        .community-text {
+            font-size: 16px;
+            color: #cccccc;
+        }
+
+        .community-text strong {
+            font-weight: 600;
+            color: #ffffff;
+            /* Angka dibuat lebih terang */
+        }
+
+        .carousel-slide {
+            display: flex;
+            /* width: 300%; - ini akan kita atur dinamis di JS, tapi biarkan dulu untuk referensi awal */
+            width: fit-content;
+            /* Biarkan konten menentukan lebar total */
+            transition: transform 1s ease-in-out;
+        }
+
+        .card {
+            min-width: 100%;
+            /* Setiap card akan mengambil 100% lebar container */
+            flex-shrink: 0;
+            /* Penting agar card tidak mengecil */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-content h2 {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .card-content p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* --- PERBAIKAN: Tombol dengan Panah --- */
+        .button-container .button {
+            background-color: #4e73df;
+            color: white;
+            /* Padding kanan ditambah untuk memberi ruang pada panah */
+            padding: 15px 60px 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            /* Sedikit lebih bulat agar modern */
+            font-size: 20px;
+            font-weight: 500;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+
+            /* Properti baru yang penting */
+            position: relative;
+            /* Wajib ada agar pseudo-element ::after bisa diposisikan */
+            transition: all 0.3s ease;
+        }
+
+        /* Menambahkan panah menggunakan pseudo-element ::after */
+        .button-container .button::after {
+            content: "→";
+            /* Karakter panah Unicode (bisa diganti dengan '\2794' atau lainnya) */
+            position: absolute;
+            top: 50%;
+            /* Posisi panah di dalam padding kanan */
+            right: 30px;
+            transform: translateY(-50%);
+            transition: right 0.3s ease;
+            /* Animasi untuk hover */
+        }
+
+        /* Efek hover pada tombol dan panah */
+        .button-container .button:hover {
+            background-color: #3b5ac4;
+            /* Warna sedikit lebih gelap saat hover */
+        }
+
+        .button-container .button:hover::after {
+            right: 25px;
+            /* Panah bergerak sedikit ke kanan saat hover */
+        }
+
+        .stats-dashboard-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            /* Membuat 2 kolom dengan lebar sama */
+            gap: 24px;
+            /* Jarak antar kartu */
+            padding: 60px 40px;
+            /* Jarak dari atas/bawah dan kiri/kanan */
+            max-width: 1200px;
+            margin: 0 auto;
+            /* Menengahkan container */
+        }
+
+        .stats-card {
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Card khusus untuk kiri atas yang berisi 4 stat kecil */
+        .top-left-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            /* Padding-nya sedikit berbeda */
+        }
+
+        .mini-stat {
+            background-color: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+            margin: 4px 0;
+        }
+
+        .stat-subtitle {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Styling untuk card dengan chart */
+        .card-header {
+            margin-bottom: 16px;
+        }
+
+        .legend {
+            margin-bottom: 24px;
+        }
+
+        .legend-item {
+            font-size: 12px;
+            margin-right: 16px;
+            position: relative;
+            padding-left: 16px;
+        }
+
+        .legend-item::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-item.review-done::before {
+            background-color: #a7f3d0;
+            /* Hijau muda */
+        }
+
+        .legend-item.need-review::before {
+            background-color: #fde68a;
+            /* Kuning muda */
+        }
+
+        .chart-placeholder,
+        .gauge-placeholder,
+        .placeholder-content {
+            flex-grow: 1;
+            /* Membuat placeholder mengisi sisa ruang */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            min-height: 150px;
+            color: #6c757d;
+        }
+
+        .chatbot-container {
+            margin-top: 80px;
+            background-color: #f7f7f7;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .chatbot-header {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4e73df;
+            margin-bottom: 10px;
+        }
+
+        .chat-box {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-y: auto;
+            max-height: 250px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chatbox-message {
+            background-color: #4e73df;
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 70%;
+            width: fit-content;
+            position: relative;
+            margin-left: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chatbox-message.user {
+            background-color: #ddd;
+            color: #333;
+            align-self: flex-end;
+            margin-right: 40px;
+            margin-left: 0;
+        }
+
+        .avatar {
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #fff;
+            position: absolute;
+            left: -50px;
+            top: 10px;
+        }
+
+        .input-box-chat {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .input-box-chat input {
+            padding: 10px;
+            width: 80%;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .input-box-chat button {
+            background-color: #4e73df;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .suggested-responses {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .suggested-responses button {
+            background-color: #4e73df;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .suggested-responses button:hover {
+            background-color: #5a8bfd;
+        }
+
+        .new-carousel-wrapper {
+            margin-top: 80px;
+            /* Jarak dari elemen sebelumnya */
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .new-carousel-header {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .new-carousel-container {
+            width: 100%;
+            overflow: hidden;
+            /* Penting untuk menyembunyikan card yang tidak terlihat */
+            position: relative;
+            max-width: 1200px;
+            /* Batasi lebar container */
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            /* Sedikit bayangan */
+        }
+
+        .new-carousel-slide {
+            display: flex;
+            width: fit-content;
+            /* Biarkan konten menentukan lebar total */
+            transition: transform 0.8s ease-in-out;
+            /* Animasi pergeseran yang halus */
+        }
+
+        .new-card {
+            min-width: 380px;
+            /* Sesuaikan lebar card, misalnya 33.33% dari container jika ingin 3 per view */
+            flex-shrink: 0;
+            /* Penting agar card tidak mengecil */
+            background-color: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px;
+            /* Jarak antar card */
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .new-card-image {
+            width: 100%;
+            height: 250px;
+            /* Tinggi gambar */
+            overflow: hidden;
+        }
+
+        .new-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Memastikan gambar mengisi area tanpa terdistorsi */
+            display: block;
+        }
+
+        .new-card-content {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .new-card-content h3 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .new-card-overlay-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #4caf50;
+            /* Hijau untuk checkmark */
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 2;
+            /* Pastikan di atas gambar */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .new-card-overlay-icon img {
+            width: 80px;
+            /* Sesuaikan ukuran logo HOAX/REAL agar terlihat baik */
+            height: auto;
+            /* Jaga rasio aspek */
+            display: block;
+            /* Hapus spasi ekstra di bawah gambar */
+        }
+
+        .new-card .rating {
+            color: #ffd700;
+            /* Warna emas untuk bintang */
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .new-card .rating-text {
+            color: #666;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .new-card-content p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .new-card .watch-now-btn {
+            background-color: #667eea;
+            /* Warna ungu seperti di gambar */
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            /* Pastikan padding termasuk dalam lebar */
+            transition: background-color 0.3s ease;
+        }
+
+        .new-card .watch-now-btn:hover {
+            background-color: #5a6ed0;
+        }
+
+        .stats-dashboard {
+            display: grid;
+            /* Membuat layout grid yang kompleks */
+            grid-template-columns: repeat(4, 1fr);
+            /* 4 kolom dengan lebar sama */
+            grid-template-rows: auto auto auto;
+            /* 3 baris */
+            gap: 24px;
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+            /* Margin atas setelah tombol */
+            background-color: #f8f9fa;
+            /* Warna latar sedikit berbeda */
+            border-radius: 20px;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            background-color: #e9ecef;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .stat-body .stat-title {
+            font-size: 16px;
+            color: #6c757d;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .stat-body .stat-growth {
+            font-size: 14px;
+            color: #28a745;
+            /* Warna hijau untuk pertumbuhan */
+        }
+
+        /* Styling untuk Card Besar (General Payment) */
+        .large-card {
+            grid-column: span 2;
+            /* Mengambil 2 kolom */
+            grid-row: span 2;
+            /* Mengambil 2 baris */
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .payment-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .payment-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .chart-legend {
+            margin-bottom: 24px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            margin-right: 16px;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .legend-item::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+
+        .legend-item.review-done::before {
+            background-color: #a7f3d0;
+            /* Hijau muda */
+        }
+
+        .legend-item.need-review::before {
+            background-color: #495057;
+            /* Abu-abu gelap */
+        }
+
+        /* Styling untuk Bar Chart (Placeholder) */
+        .bar-chart {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            gap: 12px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 4px;
+            position: relative;
+            height: 100%;
+        }
+
+        .bar,
+        .bar-alt {
+            width: 30%;
+            background-color: #a7f3d0;
+            border-radius: 4px;
+            transition: opacity 0.3s ease;
+        }
+
+        .bar-alt {
+            background-color: #495057;
+        }
+
+        .bar-group:hover .bar,
+        .bar-group:hover .bar-alt {
+            opacity: 0.7;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -20px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Styling untuk Card Kecil di Bawah */
+        .small-card {
+            grid-column: span 1;
+        }
+
+        /* Card di bawah General Payment, perlu diatur posisinya secara eksplisit */
+        #general-payment+.stat-card {
+            grid-row: 2;
+            grid-column: 1;
+        }
+
+        #general-payment+.stat-card+.stat-card {
+            grid-row: 2;
+            grid-column: 2;
+        }
+
+        .stats-dashboard>.stat-card.small-card:nth-of-type(6) {
+            grid-row: 3;
+            grid-column: 3;
+        }
+
+        .stats-dashboard>.stat-card.small-card:nth-of-type(7) {
+            grid-row: 3;
+            grid-column: 4;
+        }
+
+        /* Menargetkan card Integration Tools */
+        .stats-dashboard>.stat-card:nth-last-child(3) {
+            grid-row: 3;
+            grid-column: 1 / span 2;
+            /* Mengambil 2 kolom agar pas di bawah */
+        }
+
+        /* --- Media Queries untuk Responsivitas Dasbor --- */
+        @media screen and (max-width: 992px) {
+            .stats-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+                /* 2 kolom di tablet */
+            }
+
+            .stats-dashboard-container {
+                grid-template-columns: 1fr;
+                /* Tumpuk menjadi 1 kolom di layar kecil */
+            }
+
+            .large-card {
+                grid-column: span 2;
+                /* Tetap mengambil lebar penuh */
+                grid-row: span 1;
+                /* Hanya 1 baris agar tidak terlalu tinggi */
+                min-height: 300px;
+            }
+
+            /* Atur ulang posisi card lainnya */
+            .stats-dashboard>.stat-card.small-card,
+            #general-payment+.stat-card,
+            #general-payment+.stat-card+.stat-card,
+            .stats-dashboard>.stat-card:nth-last-child(3) {
+                grid-column: span 1;
+                grid-row: auto;
+            }
+        }
+
+        /* --- Media Queries --- */
+        @media screen and (max-width: 768px) {
+
+            /* Media Query untuk Carousel Pertama */
+            .carousel-container {
+                height: 250px;
+                /* Lebih kecil lagi di mobile */
+            }
+
+            .card {
+                width: 100%;
+                /* Membuat card pertama menjadi 100% lebar di layar kecil */
+            }
+
+            .card-content h2 {
+                font-size: 24px;
+            }
+
+            /* Media Query untuk Carousel Baru (Trending Sekarang) */
+            .new-card {
+                min-width: 90%;
+                /* Menampilkan 1 card per view di layar kecil */
+                margin: 10px auto;
+                /* Pusatkan card */
+            }
+
+            .new-carousel-container {
+                padding: 0;
+            }
+
+            .new-carousel-header {
+                font-size: 24px;
+            }
+
+            .hero-section {
+                padding: 60px 20px;
+                margin-top: 100px;
+                height: 400px;
+            }
+
+            .hero-heading {
+                font-size: 36px;
+            }
+
+            .hero-subheading {
+                font-size: 16px;
+            }
+
+            .hero-community {
+                flex-direction: column;
+                /* Tumpuk avatar dan teks secara vertikal */
+                gap: 20px;
+            }
+        }
+
+        /* --- CSS UNTUK APP LAYOUT (INSPIRASI DARI OKYAI) --- */
+
+        /* Container Utama */
+        .app-layout-container {
+            display: flex;
+            max-width: 1200px;
+            min-height: 80vh;
+            /* Memberi tinggi minimal yang signifikan */
+            margin: 60px auto;
+            background-color: #1e1f22;
+            /* Warna latar konten utama */
+            border-radius: 20px;
+            overflow: hidden;
+            /* Penting agar border-radius berfungsi pada anak elemen */
+            font-family: "Poppins", sans-serif;
+            color: #e0e0e0;
+            /* Warna teks default terang */
+        }
+
+        /* Sidebar (Kolom Kiri) */
+        .sidebar {
+            flex: 0 0 150px;
+            /* Lebar sidebar tidak akan membesar/menyusut, tetap 280px */
+            background-color: #121212;
+            /* Warna sidebar lebih gelap */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #2d2d2d;
+            transition: flex-basis 0.4s ease-in-out;
+            position: relative;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Mendorong tombol ke kanan */
+            gap: 12px;
+            margin-bottom: 40px;
+            flex-shrink: 0;
+            /* Mencegah header menyusut */
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            background-color: #2a2a2a;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        /* Gaya dasar untuk tombol di header */
+        .header-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            background-color: transparent;
+            /* Tombol tidak aktif transparan */
+            color: #a0a0a0;
+            /* Teks tidak aktif abu-abu */
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Efek Hover: HANYA untuk tombol yang TIDAK aktif */
+        .header-btn:not(.active):hover {
+            background-color: #3c3c3c;
+            color: #fff;
+        }
+
+        /* Gaya untuk tombol yang AKTIF */
+        .header-btn.active {
+            background-color: #8a2be2;
+            /* Warna ungu */
+            color: #fff;
+        }
+
+        .logo-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            /* Tambahkan ini agar logo tidak ikut menghilang */
+            overflow: hidden;
+        }
+
+        /* Tombol Toggle (Hamburger) */
+        .sidebar-toggle {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .sidebar-toggle span {
+            width: 100%;
+            height: 2.5px;
+            background-color: #a0a0a0;
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Navigasi dan Konten Sidebar */
+        .sidebar-nav .nav-item,
+        .sidebar-section ul li a,
+        .new-chat-btn,
+        .user-profile {
+            overflow: hidden;
+            /* Sembunyikan konten yang meluap */
+        }
+
+        .sidebar-nav .nav-item span:last-child,
+        .sidebar-section ul li a,
+        .new-chat-btn span:last-child,
+        .user-profile span {
+            white-space: nowrap;
+            /* Mencegah teks turun baris saat animasi */
+            transition: opacity 0.2s ease;
+        }
+
+        /* ===== LOGIKA CSS SAAT SIDEBAR DITUTUP (COLLAPSED) ===== */
+
+        /* 1. Perkecil lebar sidebar */
+        .sidebar.collapsed {
+            flex-basis: 72px;
+            /* Lebar saat ditutup, cukup untuk ikon */
+        }
+
+        /* 2. Sembunyikan teks */
+        .sidebar.collapsed .sidebar-title,
+        .sidebar.collapsed .section-title,
+        .sidebar.collapsed .sidebar-nav .nav-item span:last-of-type,
+        .sidebar.collapsed .sidebar-section ul li a,
+        .sidebar.collapsed .new-chat-btn span:last-of-type,
+        .sidebar.collapsed .user-profile span {
+            opacity: 0;
+            width: 0;
+        }
+
+        /* 3. Pusatkan item navigasi dan footer */
+        .sidebar.collapsed .nav-item,
+        .sidebar.collapsed .new-chat-btn,
+        .sidebar.collapsed .user-profile {
+            justify-content: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .sidebar.collapsed .nav-item span:first-child {
+            /* Ikon */
+            margin: 0;
+        }
+
+        .sidebar.collapsed .sidebar-footer {
+            align-items: center;
+        }
+
+        .sidebar.collapsed .user-profile {
+            border-top: none;
+        }
+
+        /* 4. Animasi ikon hamburger menjadi 'X' */
+        .sidebar.collapsed .sidebar-toggle span:nth-of-type(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .sidebar.collapsed .sidebar-toggle span:nth-of-type(2) {
+            opacity: 0;
+        }
+
+        .sidebar.collapsed .sidebar-toggle span:nth-of-type(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .sidebar-nav .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            color: #a0a0a0;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 8px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .sidebar-nav .nav-item:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .sidebar-nav .nav-item.active {
+            background-color: #8a2be2;
+            /* Warna ungu untuk item aktif */
+            color: #fff;
+        }
+
+        .sidebar-section {
+            margin-top: 30px;
+        }
+
+        .sidebar-section.history {
+            flex-grow: 1;
+            /* Membuat section ini mengisi sisa ruang */
+            overflow-y: auto;
+            /* Scroll jika history panjang */
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 500;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-left: 12px;
+        }
+
+        .sidebar-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-section ul li a {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 8px 12px;
+            color: #a0a0a0;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .sidebar-section ul li a:hover {
+            background-color: #2a2a2a;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            /* Mendorong footer ke bawah */
+            padding-top: 20px;
+        }
+
+        .new-chat-btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background-color: #8a2be2;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-top: 1px solid #2d2d2d;
+        }
+
+        .user-profile img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        /* Konten Utama (Kolom Kanan) */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .content-header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        .content-header h2 {
+            font-size: 18px;
+            font-weight: 400;
+            color: #a0a0a0;
+            margin: 4px 0 0 0;
+        }
+
+        .content-section {
+            margin-top: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #fff;
+            margin: 0;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background-color: #2d2d2d;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            margin-left: 8px;
+        }
+
+        .search-box input::placeholder {
+            color: #a0a0a0;
+        }
+
+        .filter-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-pills .pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid #444;
+            background-color: transparent;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-pills .pill:hover {
+            background-color: #2a2a2a;
+            color: #fff;
+        }
+
+        .filter-pills .pill.active {
+            background-color: #fff;
+            color: #121212;
+            border-color: #fff;
+            font-weight: 600;
+        }
+
+        .automation-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .automation-card {
+            background-color: #3b2b4c;
+            /* Warna ungu gelap */
+            border: 1px solid #8a2be2;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .automation-card p {
+            font-weight: 500;
+            color: #fff;
+            margin: 0 0 8px 0;
+        }
+
+        .automation-card span {
+            font-size: 12px;
+            color: #c0c0c0;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .automation-card button {
+            background-color: #fff;
+            color: #121212;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .recent-chat-list .recent-chat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background-color: #2a2a2a;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .view-all {
+            display: block;
+            text-align: right;
+            margin-top: 15px;
+            color: #a0a0a0;
+            text-decoration: none;
+        }
+
+        /* --- CSS UNTUK FORM DETEKSI SIMPLE --- */
+
+        .simple-detector-form {
+            display: flex;
+
+            margin: 40px auto;
+            /* Memberi jarak dan memusatkan form */
+            border-radius: 8px;
+            /* Sudut melengkung untuk keseluruhan form */
+            overflow: hidden;
+            /* Memastikan sudut melengkung diterapkan dengan benar */
+            border: 1px solid #444;
+            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        /* Memberi efek glow saat form aktif */
+        .simple-detector-form:focus-within {
+            border-color: #8a2be2;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.3);
+        }
+
+        .simple-detector-form input {
+            flex-grow: 1;
+            /* Membuat input mengambil semua sisa ruang */
+            border: none;
+            /* Hapus border default */
+            background-color: #2d2d2d;
+            padding: 15px 20px;
+            color: #e0e0e0;
+            font-size: 16px;
+            font-family: "Poppins", sans-serif;
+            min-width: 0;
+            /* Penting untuk fleksibilitas di dalam flex container */
+        }
+
+        /* Hapus outline default saat input di-klik */
+        .simple-detector-form input:focus {
+            outline: none;
+        }
+
+        .simple-detector-form button {
+            border: none;
+            background-color: #8a2be2;
+            /* Warna ungu utama */
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            flex-shrink: 0;
+            /* Mencegah tombol menyusut */
+            transition: background-color 0.2s ease;
+        }
+
+        .simple-detector-form button:hover {
+            background-color: #7b25cb;
+            /* Warna sedikit lebih gelap saat hover */
+        }
+
+        /* --- Media Query untuk Responsivitas --- */
+
+        @media screen and (max-width: 576px) {
+            .top-left-card {
+                grid-template-columns: 1fr;
+                /* Tumpuk juga stat kecilnya */
+            }
+
+            .stats-dashboard {
+                grid-template-columns: 1fr;
+                /* 1 kolom di mobile */
+                padding: 30px 20px;
+            }
+
+            .large-card,
+            .stats-dashboard>.stat-card {
+                grid-column: span 1;
+                /* Semua card mengambil lebar penuh */
+            }
+
+            .hero-section {
+                /* Perkecil lagi tinggi di layar mobile */
+                height: 350px;
+            }
+        }
+
+        @media screen and (max-width: 1200px) and (min-width: 769px) {
+
+            /* Untuk layar tablet atau laptop kecil, tampilkan 2 card */
+            .new-card {
+                min-width: 45%;
+                /* Sekitar 2 card per view dengan margin */
+            }
+
+            .new-carousel-slide {
+                justify-content: flex-start;
+                /* Biar rata kiri */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header-container">
+        <div class="top-bar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='Image/logo.jpg') }}" alt="Logo" />
+            </div>
+            <div class="profile">
+                <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="Profil Icon" />
+                <div class="profile-text">Ryan</div>
+            </div>
+        </div>
+
+        <nav class="main-nav" id="main-nav">
+            <div class="nav-menu">
+                <a href="#" class="active">HOME</a>
+                <a href="#">FITUR</a>
+                <a href="#">CONTACT</a>
+                <a href="#">ABOUT</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="header-spacer"></div>
+
+
+    <div class="hero-section">
+        <div class="hero-video-wrapper">
+            <video playsinline autoplay loop muted>
+                <source src="{{ url_for('static', filename='Image/verify1.mp4') }}" type="video/mp4" />
+            </video>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-heading">Deteksi Hoax di Sekitar Anda.</h1>
+
+            <div class="hero-community">
+                <div class="community-avatars">
+                    <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="Wanderer 1" />
+                    <img src="{{ url_for('static', filename='Image/logo.jpg') }}" alt="Wanderer 2" />
+                    <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="Wanderer 3" />
+                    <img src="{{ url_for('static', filename='Image/logo.jpg') }}" alt="Wanderer 4" />
+                </div>
+                <p class="community-text">
+                    Join <strong>449,583</strong> Wanderers and counting...
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <a href="#" class="button">Deteksi Hoaks</a>
+    </div>
+
+    <div class="stats-dashboard">
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-icon">👥</span>
+                <span class="stat-value">1,273</span>
+            </div>
+            <div class="stat-body">
+                <div class="stat-title">Total Customers</div>
+                <div class="stat-growth">+9% Month-over-month</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-icon">👤</span>
+                <span class="stat-value">828</span>
+            </div>
+            <div class="stat-body">
+                <div class="stat-title">Active Customers</div>
+                <div class="stat-growth">+9% Month-over-month</div>
+            </div>
+        </div>
+        <div class="stat-card large-card" id="general-payment">
+            <div class="payment-header">
+                <div class="payment-title">General Payment</div>
+                <div class="payment-amount">$47,928.10</div>
+            </div>
+            <div class="chart-legend">
+                <span class="legend-item review-done">Review Done</span>
+                <span class="legend-item need-review">Need to Review</span>
+            </div>
+            <div class="bar-chart">
+                <div class="bar-group">
+                    <div class="bar" style="height: 40%"></div>
+                    <div class="bar-alt" style="height: 30%"></div>
+                    <div class="bar-label">Jan</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 70%"></div>
+                    <div class="bar-alt" style="height: 40%"></div>
+                    <div class="bar-label">Feb</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 60%"></div>
+                    <div class="bar-alt" style="height: 80%"></div>
+                    <div class="bar-label">Mar</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 20%"></div>
+                    <div class="bar-alt" style="height: 45%"></div>
+                    <div class="bar-label">Apr</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 50%"></div>
+                    <div class="bar-alt" style="height: 75%"></div>
+                    <div class="bar-label">May</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bar" style="height: 85%"></div>
+                    <div class="bar-alt" style="height: 78%"></div>
+                    <div class="bar-label">Jun</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-value">$10,928</span>
+            </div>
+            <div class="stat-body">
+                <div class="stat-title">Revenue</div>
+                <div class="stat-growth">+9% Month-over-month</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-header">
+                <span class="stat-value">$2,712</span>
+            </div>
+            <div class="stat-body">
+                <div class="stat-title">Expense</div>
+                <div class="stat-growth">+9% Month-over-month</div>
+            </div>
+        </div>
+
+        <div class="stat-card small-card">
+            <div class="stat-title">Integration Tools</div>
+            <p>Avg Response Time:</p>
+            <div class="gauge-placeholder"></div>
+        </div>
+        <div class="stat-card small-card">
+            <div class="stat-title">Stock Products</div>
+            <p>112 / 204</p>
+            <div class="progress-bar-placeholder"></div>
+        </div>
+        <div class="stat-card small-card">
+            <div class="stat-title">Sales Rating</div>
+            <p>⭐️ 4.8</p>
+            <div class="rating-placeholder"></div>
+        </div>
+    </div>
+
+    <div class="chatbot-container">
+        <div class="chatbot-header">DETEKSI HOAKS</div>
+        <div class="chat-box" id="chat-box">
+            <div class="chatbox-message">
+                <img class="avatar" src="{{ url_for('static', filename='Image/logo.jpg') }}" alt="Logo" />
+                Hi! Saya siap membantu mengecek berita atau file anda.
+            </div>
+        </div>
+        <div class="input-box-chat">
+            <input type="text" id="user-input" placeholder="Silahkan ketik link anda" />
+            <button id="send-btn">Cari</button>
+        </div>
+    </div>
+
+    <div class="app-layout-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="header-actions">
+                    <button class="header-btn active">
+                        <span>💬</span>
+                        <span class="btn-text">Chats</span>
+                    </button>
+                    <button class="header-btn">
+                        <span>📊</span>
+                        <span class="btn-text">Analisis</span>
+                    </button>
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <div class="sidebar-section history">
+                <h4 class="section-title">CHAT HISTORY</h4>
+                <ul>
+                    <li><a href="#">What can Artificial Intelligence.</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="new-chat-btn"><span>+</span> New chat</button>
+                <div class="user-profile">
+                    <img src="{{ url_for('static', filename='Image/ryan.jpg') }}" alt="User Profile" />
+                    <span>Ryan</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="content-header">
+                <h1>Good Morning!</h1>
+                <h2>Alex Williamson</h2>
+            </div>
+
+            <div class="content-section">
+                <div class="section-header">
+                    <h3>Automation</h3>
+                </div>
+                <div class="automation-cards">
+                    <div class="automation-card">
+                        <p>How workout ideal for my body shape.</p>
+                        <span>Based on your morning routine.</span>
+                        <button>Generate</button>
+                    </div>
+                    <div class="automation-card">
+                        <p>Today's food and beverages shopping</p>
+                        <span>Based on your morning routine.</span>
+                        <button>Generate</button>
+                    </div>
+                    <div class="automation-card">
+                        <p>Today's food and beverages shopping</p>
+                        <span>Based on your morning routine.</span>
+                        <button>Generate</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="simple-detector-form">
+                <input type="text" id="link-input" placeholder="Silahkan ketik kalimat berita anda..." />
+                <button id="search-link-btn">Cari</button>
+            </div>
+        </main>
+    </div>
+
+    <div class="new-carousel-wrapper">
+        <div class="new-carousel-header">Sedang Trending Sekarang</div>
+        <div class="new-carousel-container">
+            <div class="new-carousel-slide" id="movie-carousel-slide">
+                <div class="new-card">
+                    <div class="new-card-overlay-icon">
+                        <img src="{{ url_for('static', filename='Image/REAL.png') }}" alt="Real" />
+                    </div>
+                    <div class="new-card-image">
+                        <img src="{{ url_for('static', filename='Image/tsunami.jpeg') }}" alt="The Flash Poster" />
+                    </div>
+                    <div class="new-card-content">
+                        <h3>The Flash (2023)</h3>
+                        <div class="rating">
+                            <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span>
+                            <span class="rating-text">4.0 (675K)</span>
+                        </div>
+                        <p>
+                            After being struck by lightning, Barry Allen wakes up from...
+                        </p>
+                        <button class="watch-now-btn">Watch Now</button>
+                    </div>
+                </div>
+                <div class="new-card">
+                    <div class="new-card-overlay-icon">
+                        <img src="{{ url_for('static', filename='Image/HOAX.png') }}" alt="Hoax" />
+                    </div>
+                    <div class="new-card-image">
+                        <img src="{{ url_for('static', filename='Image/kebanjiran.jpeg') }}" alt="Aquaman Poster" />
+                    </div>
+                    <div class="new-card-content">
+                        <h3>Aquaman (2018)</h3>
+                        <div class="rating">
+                            <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span>
+                            <span class="rating-text">3.8 (520K)</span>
+                        </div>
+                        <p>
+                            Arthur Curry discovers he is the heir to the underwater kingdom
+                            of Atlantis...
+                        </p>
+                        <button class="watch-now-btn">Watch Now</button>
+                    </div>
+                </div>
+                <div class="new-card">
+                    <div class="new-card-overlay-icon">
+                        <img src="{{ url_for('static', filename='Image/HOAX.png') }}" alt="Hoax" />
+                    </div>
+                    <div class="new-card-image">
+                        <img src="{{ url_for('static', filename='Image/pemerkosaan.jpeg') }}" alt="Superman Poster" />
+                    </div>
+                    <div class="new-card-content">
+                        <h3>Man of Steel (2013)</h3>
+                        <div class="rating">
+                            <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span>
+                            <span class="rating-text">4.2 (780K)</span>
+                        </div>
+                        <p>
+                            Clark Kent is a young man who struggles to find his place in the
+                            world...
+                        </p>
+                        <button class="watch-now-btn">Watch Now</button>
+                    </div>
+                </div>
+                <div class="new-card">
+                    <div class="new-card-overlay-icon">
+                        <img src="{{ url_for('static', filename='Image/REAL.png') }}" alt="Real" />
+                    </div>
+                    <div class="new-card-image">
+                        <img src="{{ url_for('static', filename='Image/pembunuhan.jpeg') }}" alt="The Flash Poster" />
+                    </div>
+                    <div class="new-card-content">
+                        <h3>The Flash (2023)</h3>
+                        <div class="rating">
+                            <span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9733;</span><span>&#9734;</span>
+                            <span class="rating-text">4.0 (675K)</span>
+                        </div>
+                        <p>
+                            After being struck by lightning, Barry Allen wakes up from...
+                        </p>
+                        <button class="watch-now-btn">Watch Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nav = document.getElementById('main-nav');
+            const headerContainer = document.querySelector('.header-container');
+
+            if (nav && headerContainer) {
+                // Ambil posisi vertikal awal dari header container
+                const stickyPoint = headerContainer.offsetTop + headerContainer.offsetHeight;
+
+                window.addEventListener('scroll', () => {
+                    // Jika posisi scroll lebih besar dari titik tempel
+                    if (window.scrollY > stickyPoint) {
+                        nav.classList.add('is-sticky');
+                    } else {
+                        nav.classList.remove('is-sticky');
+                    }
+                });
+            }
+        });
+        // JavaScript untuk membuka-tutup Sidebar
+        document.addEventListener("DOMContentLoaded", () => {
+            const toggleButton = document.getElementById("sidebar-toggle-btn");
+            const sidebar = document.querySelector(".sidebar");
+
+            if (toggleButton && sidebar) {
+                toggleButton.addEventListener("click", () => {
+                    sidebar.classList.toggle("collapsed");
+                });
+            }
+        });
+
+        // JavaScript untuk Carousel Kedua (Sedang Trending Sekarang)
+        const movieCarouselSlide = document.getElementById(
+            "movie-carousel-slide"
+        );
+        const movieCards = document.querySelectorAll(
+            ".new-carousel-slide .new-card"
+        );
+        const movieCardWidth = movieCards[0].offsetWidth; // Lebar satu card
+        let movieSlideIndex = 0;
+        const totalMovieCards = movieCards.length;
+
+        // JavaScript untuk Carousel Pertama (Main Carousel)
+        const mainCarouselSlide = document.getElementById("main-carousel-slide");
+        const mainCarouselCards = document.querySelectorAll(
+            ".carousel-slide .card"
+        );
+        // Mendapatkan lebar satu card, penting untuk pergeseran
+        // Perhatikan bahwa `mainCarouselCards[0].offsetWidth` akan memberikan lebar card termasuk padding/border jika ada.
+        // Jika ada margin antar card, Anda perlu menambahkannya.
+        let mainCardWidth = mainCarouselCards[0].offsetWidth;
+        let mainSlideIndex = 0;
+        const totalMainCards = mainCarouselCards.length;
+
+        // Pastikan lebar card dihitung ulang jika ukuran layar berubah
+        window.addEventListener("resize", () => {
+            mainCardWidth = mainCarouselCards[0].offsetWidth;
+            // Langsung atur posisi saat resize agar tidak aneh
+            mainCarouselSlide.style.transform = `translateX(-${mainSlideIndex * mainCardWidth
+                }px)`;
+        });
+
+        function moveMainCarousel() {
+            mainSlideIndex++;
+            // Logika loop halus: jika sudah mencapai card terakhir (duplikat),
+            // reset posisi ke awal tanpa transisi, lalu lanjutkan transisi normal.
+            if (mainSlideIndex >= totalMainCards) {
+                mainCarouselSlide.style.transition = "none"; // Matikan transisi
+                mainCarouselSlide.style.transform = `translateX(0)`; // Pindah ke awal (card pertama)
+                mainSlideIndex = 1; // Set index ke card kedua (card asli pertama)
+                // Paksa reflow browser agar perubahan transisi 'none' diterapkan sebelum dihidupkan lagi
+                void mainCarouselSlide.offsetWidth;
+                mainCarouselSlide.style.transition = "transform 1s ease-in-out"; // Hidupkan transisi lagi
+            }
+            mainCarouselSlide.style.transform = `translateX(-${mainSlideIndex * mainCardWidth
+                }px)`;
+        }
+
+        // Jalankan carousel setiap 3 detik
+        setInterval(moveMainCarousel, 3000); // Sesuaikan interval sesuai keinginan (misalnya 3000ms = 3 detik)
+
+        function moveMovieCarousel() {
+            movieSlideIndex++;
+            // Jika sudah mencapai card terakhir (yang merupakan duplikat dari card pertama),
+            // reset ke posisi awal tanpa transisi, lalu mulai transisi ke card kedua
+            if (movieSlideIndex >= totalMovieCards) {
+                movieCarouselSlide.style.transition = "none"; // Matikan transisi
+                movieCarouselSlide.style.transform = `translateX(0)`; // Pindah ke awal
+                movieSlideIndex = 1; // Set index ke card kedua (card asli pertama)
+                // Paksa reflow browser agar perubahan transisi 'none' diterapkan sebelum dihidupkan lagi
+                void movieCarouselSlide.offsetWidth;
+                movieCarouselSlide.style.transition = "transform 0.8s ease-in-out"; // Hidupkan transisi lagi
+            }
+            movieCarouselSlide.style.transform = `translateX(-${movieSlideIndex * movieCardWidth
+                }px)`;
+        }
+
+        // Jalankan carousel setiap 3 detik
+        setInterval(moveMovieCarousel, 3000); // Sesuaikan interval sesuai keinginan
+
+        // Catatan: Jika ada padding/margin antar card, Anda mungkin perlu menyesuaikan perhitungan `movieCardWidth`
+        // misalnya: `movieCardWidth = movieCards[0].offsetWidth + (jarak antar card);`
+    </script>
+</body>
+
+</html>

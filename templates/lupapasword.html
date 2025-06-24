@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify.ai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/lupapasword.css') }}">
+
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <div class="login-left">
+      <video playsinline autoplay loop muted class="login-bg-video">
+        <source src="{{ url_for('static', filename='Image/verify1.mp4') }}" type="video/mp4" />
+      </video>
+    </div>
+    <div class="login-right">
+      <div class="login-form-wrapper">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <ul class="flash-messages">
+          {% for category, message in messages %}
+          <li class="flash-{{ category }}">
+            {{ message }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+        <h1>Lupa Password Anda? 👋</h1>
+        <p>
+          Masukkan email Anda yang terdaftar, kami akan mengirimkan kode verifikasi.
+        </p>
+
+        <form class="login-form" method="POST" action="{{ url_for('lupapasword') }}">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="emailanda@gmail.com" required />
+            <span class="validation-message" id="email-message"></span>
+          </div>
+
+          <button type="submit" class="btn-primary">Kirim</button>
+        </form>
+
+        <p class="signup-prompt">Kembali ke halaman login? <a href="{{ url_for('login') }}">Masuk Kembali</a></p>
+      </div>
+    </div>
+  </div>
+  <script>
+    // --- JAVASCRIPT UNTUK VALIDASI EMAIL REAL-TIME ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // Ambil elemen input email dan elemen untuk pesannya
+      const emailInput = document.getElementById("email");
+      const emailMessage = document.getElementById("email-message");
+
+      // Pastikan kedua elemen ada sebelum melanjutkan
+      if (emailInput && emailMessage) {
+        // Tambahkan event listener yang akan berjalan setiap kali pengguna mengetik
+        emailInput.addEventListener("input", () => {
+          const emailValue = emailInput.value.toLowerCase(); // Ambil nilai input dan ubah ke huruf kecil
+
+          // Jika kolom input kosong, reset semua gaya
+          if (emailValue === "") {
+            emailInput.classList.remove("is-valid", "is-invalid");
+            emailMessage.textContent = "";
+            emailMessage.classList.remove("is-valid", "is-invalid");
+            return; // Hentikan fungsi
+          }
+
+          // Cek apakah nilai diakhiri dengan '@gmail.com'
+          if (emailValue.endsWith("@gmail.com")) {
+            // --- KONDISI VALID ---
+            emailInput.classList.add("is-valid");
+            emailInput.classList.remove("is-invalid");
+
+            emailMessage.textContent = "email anda telah sesuai";
+            emailMessage.classList.add("is-valid");
+            emailMessage.classList.remove("is-invalid");
+          } else {
+            // --- KONDISI TIDAK VALID ---
+            emailInput.classList.add("is-invalid");
+            emailInput.classList.remove("is-valid");
+
+            emailMessage.textContent = "email anda salah";
+            emailMessage.classList.add("is-invalid");
+            emailMessage.classList.remove("is-valid");
+          }
+        });
+      }
+      // Di dalam event listener 'DOMContentLoaded' Anda
+
+      const passwordInput = document.getElementById("password");
+      const reqCapital = document.getElementById("req-capital");
+      const reqNumber = document.getElementById("req-number");
+      const reqSymbol = document.getElementById("req-symbol");
+
+      if (passwordInput && reqCapital && reqNumber && reqSymbol) {
+        passwordInput.addEventListener("input", () => {
+          const value = passwordInput.value;
+          let isValid = true; // Anggap password valid pada awalnya
+
+          // Jika input kosong, reset semua
+          if (value.length === 0) {
+            passwordInput.classList.remove("is-valid", "is-invalid");
+            reqCapital.className = "";
+            reqNumber.className = "";
+            reqSymbol.className = "";
+            return;
+          }
+
+          // Cek huruf kapital
+          if (/[A-Z]/.test(value)) {
+            reqCapital.className = "valid";
+          } else {
+            reqCapital.className = "invalid";
+            isValid = false; // Jika satu syarat tidak terpenuhi, password tidak valid
+          }
+
+          // Cek angka
+          if (/[0-9]/.test(value)) {
+            reqNumber.className = "valid";
+          } else {
+            reqNumber.className = "invalid";
+            isValid = false;
+          }
+
+          // Cek simbol
+          if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            reqSymbol.className = "valid";
+          } else {
+            reqSymbol.className = "invalid";
+            isValid = false;
+          }
+
+          // Terapkan gaya neon berdasarkan status validitas akhir
+          if (isValid) {
+            passwordInput.classList.add("is-valid");
+            passwordInput.classList.remove("is-invalid");
+          } else {
+            passwordInput.classList.add("is-invalid");
+            passwordInput.classList.remove("is-valid");
+          }
+        });
+      }
+    });
+    // --- JAVASCRIPT UNTUK PASSWORD INTERAKTIF ---
+    document.addEventListener("DOMContentLoaded", () => {
+      // Ambil semua elemen yang dibutuhkan
+      const passwordInput = document.getElementById("password");
+      const passwordToggle = document.getElementById("password-toggle");
+
+      const reqCapital = document.getElementById("req-capital");
+      const reqNumber = document.getElementById("req-number");
+      const reqSymbol = document.getElementById("req-symbol");
+
+      if (
+        passwordInput &&
+        passwordToggle &&
+        reqCapital &&
+        reqNumber &&
+        reqSymbol
+      ) {
+        // Fungsionalitas 1: Toggle Lihat/Sembunyikan Password
+        passwordToggle.addEventListener("click", () => {
+          // Ubah tipe input dari password ke text, atau sebaliknya
+          const type =
+            passwordInput.getAttribute("type") === "password"
+              ? "text"
+              : "password";
+          passwordInput.setAttribute("type", type);
+
+          // Ubah ikon mata
+          passwordToggle.classList.toggle("fa-eye");
+          passwordToggle.classList.toggle("fa-eye-slash");
+        });
+
+        // Fungsionalitas 2: Validasi Syarat Password Real-time
+        passwordInput.addEventListener("input", () => {
+          const value = passwordInput.value;
+
+          // Jika input kosong, reset semua
+          if (value.length === 0) {
+            reqCapital.className = "";
+            reqNumber.className = "";
+            reqSymbol.className = "";
+            return;
+          }
+
+          // Cek huruf kapital
+          if (/[A-Z]/.test(value)) {
+            reqCapital.className = "valid";
+          } else {
+            reqCapital.className = "invalid";
+          }
+
+          // Cek angka
+          if (/[0-9]/.test(value)) {
+            reqNumber.className = "valid";
+          } else {
+            reqNumber.className = "invalid";
+          }
+
+          // Cek simbol
+          if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+            reqSymbol.className = "valid";
+          } else {
+            reqSymbol.className = "invalid";
+          }
+        });
+      }
+    });
+  </script>
+
+  <footer class="login-footer">Machine Learning Kelompok 4</footer>
+</body>
+
+</html>

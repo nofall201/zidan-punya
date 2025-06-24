@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify.ai</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+    <style>
+      
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container">
+      <div class="login-left">
+        <video playsinline autoplay loop muted class="login-bg-video">
+          <source
+            src="{{ url_for('static', filename='Image/verify1.mp4') }}"
+            type="video/mp4"
+          />
+        </video>
+      </div>
+      <div class="login-right">
+        <div class="login-form-wrapper">
+          <h1>Welcome Back 👋</h1>
+          <p>
+            AI Chatbot yang siap menjadi teman anda dalam proteksi berita bohong.
+          </p>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert-email">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+          <form class="login-form" method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                placeholder="emailanda@gmail.com"
+              />
+              <span class="validation-message" id="email-message"></span>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+
+              <div class="password-input-wrapper">
+                <input
+                  type="password"
+                  id="password"
+                  name="password" 
+                  required
+                  placeholder="Minimal 8 karakter"
+                />
+                <i
+                  class="fas fa-eye password-toggle-icon"
+                  id="password-toggle"
+                ></i>
+              </div>
+
+              <div class="password-meta-info">
+                <div class="password-requirements">
+                  <span id="req-capital">Mengandung huruf kapital</span>
+                  <span id="req-number">Mengandung angka</span>
+                  <span id="req-symbol">Mengandung simbol</span>
+                </div>
+                <a href="{{ url_for('lupapasword') }}" class="forgot-password">Lupa Password?</a>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">Masuk</button>
+          </form>
+
+          <div class="login-separator">
+            <span>Or</span>
+          </div>
+
+          <div class="social-login">
+            <button class="btn-social google">
+              <i class="fab fa-google"></i>
+              <span>Masuk dengan Google</span>
+            </button>
+          </div>
+
+          <p class="signup-prompt">
+            Belum Punya Akun? <a href="{{ url_for('signup') }}">Daftar</a>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      // --- JAVASCRIPT UNTUK VALIDASI EMAIL REAL-TIME ---
+      document.addEventListener("DOMContentLoaded", () => {
+        // Ambil elemen input email dan elemen untuk pesannya
+        const emailInput = document.getElementById("email");
+        const emailMessage = document.getElementById("email-message");
+
+        // Pastikan kedua elemen ada sebelum melanjutkan
+        if (emailInput && emailMessage) {
+          // Tambahkan event listener yang akan berjalan setiap kali pengguna mengetik
+          emailInput.addEventListener("input", () => {
+            const emailValue = emailInput.value.toLowerCase(); // Ambil nilai input dan ubah ke huruf kecil
+
+            // Jika kolom input kosong, reset semua gaya
+            if (emailValue === "") {
+              emailInput.classList.remove("is-valid", "is-invalid");
+              emailMessage.textContent = "";
+              emailMessage.classList.remove("is-valid", "is-invalid");
+              return; // Hentikan fungsi
+            }
+
+            // Cek apakah nilai diakhiri dengan '@gmail.com'
+            if (emailValue.endsWith("@gmail.com")) {
+              // --- KONDISI VALID ---
+              emailInput.classList.add("is-valid");
+              emailInput.classList.remove("is-invalid");
+
+              emailMessage.textContent = "email anda telah sesuai";
+              emailMessage.classList.add("is-valid");
+              emailMessage.classList.remove("is-invalid");
+            } else {
+              // --- KONDISI TIDAK VALID ---
+              emailInput.classList.add("is-invalid");
+              emailInput.classList.remove("is-valid");
+
+              emailMessage.textContent = "email anda salah";
+              emailMessage.classList.add("is-invalid");
+              emailMessage.classList.remove("is-valid");
+            }
+          });
+        }
+        // Di dalam event listener 'DOMContentLoaded' Anda
+
+        const passwordInput = document.getElementById("password");
+        const reqCapital = document.getElementById("req-capital");
+        const reqNumber = document.getElementById("req-number");
+        const reqSymbol = document.getElementById("req-symbol");
+
+        if (passwordInput && reqCapital && reqNumber && reqSymbol) {
+          passwordInput.addEventListener("input", () => {
+            const value = passwordInput.value;
+            let isValid = true; // Anggap password valid pada awalnya
+
+            // Jika input kosong, reset semua
+            if (value.length === 0) {
+              passwordInput.classList.remove("is-valid", "is-invalid");
+              reqCapital.className = "";
+              reqNumber.className = "";
+              reqSymbol.className = "";
+              return;
+            }
+
+            // Cek huruf kapital
+            if (/[A-Z]/.test(value)) {
+              reqCapital.className = "valid";
+            } else {
+              reqCapital.className = "invalid";
+              isValid = false; // Jika satu syarat tidak terpenuhi, password tidak valid
+            }
+
+            // Cek angka
+            if (/[0-9]/.test(value)) {
+              reqNumber.className = "valid";
+            } else {
+              reqNumber.className = "invalid";
+              isValid = false;
+            }
+
+            // Cek simbol
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+              reqSymbol.className = "valid";
+            } else {
+              reqSymbol.className = "invalid";
+              isValid = false;
+            }
+
+            // Terapkan gaya neon berdasarkan status validitas akhir
+            if (isValid) {
+              passwordInput.classList.add("is-valid");
+              passwordInput.classList.remove("is-invalid");
+            } else {
+              passwordInput.classList.add("is-invalid");
+              passwordInput.classList.remove("is-valid");
+            }
+          });
+        }
+      });
+      // --- JAVASCRIPT UNTUK PASSWORD INTERAKTIF ---
+      document.addEventListener("DOMContentLoaded", () => {
+        // Ambil semua elemen yang dibutuhkan
+        const passwordInput = document.getElementById("password");
+        const passwordToggle = document.getElementById("password-toggle");
+
+        const reqCapital = document.getElementById("req-capital");
+        const reqNumber = document.getElementById("req-number");
+        const reqSymbol = document.getElementById("req-symbol");
+
+        if (
+          passwordInput &&
+          passwordToggle &&
+          reqCapital &&
+          reqNumber &&
+          reqSymbol
+        ) {
+          // Fungsionalitas 1: Toggle Lihat/Sembunyikan Password
+          passwordToggle.addEventListener("click", () => {
+            // Ubah tipe input dari password ke text, atau sebaliknya
+            const type =
+              passwordInput.getAttribute("type") === "password"
+                ? "text"
+                : "password";
+            passwordInput.setAttribute("type", type);
+
+            // Ubah ikon mata
+            passwordToggle.classList.toggle("fa-eye");
+            passwordToggle.classList.toggle("fa-eye-slash");
+          });
+
+          // Fungsionalitas 2: Validasi Syarat Password Real-time
+          passwordInput.addEventListener("input", () => {
+            const value = passwordInput.value;
+
+            // Jika input kosong, reset semua
+            if (value.length === 0) {
+              reqCapital.className = "";
+              reqNumber.className = "";
+              reqSymbol.className = "";
+              return;
+            }
+
+            // Cek huruf kapital
+            if (/[A-Z]/.test(value)) {
+              reqCapital.className = "valid";
+            } else {
+              reqCapital.className = "invalid";
+            }
+
+            // Cek angka
+            if (/[0-9]/.test(value)) {
+              reqNumber.className = "valid";
+            } else {
+              reqNumber.className = "invalid";
+            }
+
+            // Cek simbol
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+              reqSymbol.className = "valid";
+            } else {
+              reqSymbol.className = "invalid";
+            }
+          });
+        }
+      });
+    </script>
+
+    <footer class="login-footer">Machin Learning Kelompok 4</footer>
+  </body>
+</html>

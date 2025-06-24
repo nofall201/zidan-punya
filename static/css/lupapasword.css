@@ -1,0 +1,438 @@
+/* --- Gaya Dasar (Desktop First) --- */
+:root {
+    --primary-color: #008060;
+    /* Warna hijau tua yang baru */
+    --primary-color-dark: #00664d;
+    --google-color: #db4437;
+    --facebook-color: #3b5998;
+    --light-gray: #f4f4f4;
+    --dark-text: #333;
+    --medium-text: #666;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Style Dasar untuk Semua Tampilan */
+  body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--light-gray);
+    color: var(--dark-text);
+  }
+
+  .login-container {
+    display: flex;
+
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    /* Untuk menjaga border-radius pada gambar */
+  }
+
+  .login-left {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #d3f8e2;
+    /* Warna fallback jika gambar tidak लोड */
+    overflow: hidden;
+  }
+
+  .login-bg-video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Mencegah video terdistorsi */
+  }
+
+  .login-right {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .login-form-wrapper {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .login-form h1 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .login-form p {
+    color: #666;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .form-group input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+
+  .forgot-password {
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+    white-space: nowrap;
+    /* Mencegah teks turun baris */
+    margin-left: 20px;
+    /* Memberi jarak dari notifikasi */
+  }
+
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+
+  /* Wrapper untuk input dan ikon */
+  .password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .password-input-wrapper input {
+    /* Beri padding kanan agar teks tidak tertutup ikon */
+    padding-right: 40px;
+  }
+
+  /* Gaya untuk ikon mata */
+  .password-toggle-icon {
+    position: absolute;
+    right: 15px;
+    color: #999;
+    cursor: pointer;
+  }
+
+  .password-meta-info {
+    display: flex;
+    justify-content: space-between;
+    /* Mendorong item ke kiri dan kanan */
+    align-items: flex-start;
+    /* Sejajarkan dari atas */
+    margin-top: 8px;
+    /* Jarak dari kolom password di atasnya */
+  }
+
+  /* Gaya untuk notifikasi syarat password */
+  .password-requirements {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .password-requirements span {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    /* Warna default (abu-abu) */
+    transition: color 0.3s ease;
+  }
+
+  /* Gaya saat syarat TERPENUHI (valid) */
+  .password-requirements span.valid {
+    color: #28a745;
+    /* Hijau */
+    text-decoration: line-through;
+    /* Coret teks yang sudah valid */
+  }
+
+  /* Gaya saat syarat BELUM TERPENUHI (invalid) saat user mengetik */
+  .password-requirements span.invalid {
+    color: #dc3545;
+    /* Merah */
+  }
+
+  /* --- CSS UNTUK VALIDASI FORM REAL-TIME --- */
+
+  /* Gaya dasar untuk pesan notifikasi */
+  .validation-message {
+    display: block;
+    /* Agar muncul di baris baru */
+    margin-top: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    height: 15px;
+    /* Beri tinggi tetap agar layout tidak "loncat" */
+  }
+
+  /* Gaya untuk input yang VALID */
+  .form-group input.is-valid {
+    border-color: #28a745;
+    /* Hijau */
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+    /* Efek neon hijau */
+  }
+
+  /* Gaya untuk pesan notifikasi VALID */
+  .validation-message.is-valid {
+    color: #28a745;
+    /* Hijau */
+  }
+
+  /* Gaya untuk input yang INVALID */
+  .form-group input.is-invalid {
+    border-color: #dc3545;
+    /* Merah */
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+    /* Efek neon merah */
+  }
+
+  /* Gaya untuk pesan notifikasi INVALID */
+  .validation-message.is-invalid {
+    color: #dc3545;
+    /* Merah */
+  }
+
+  .btn-primary {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .login-separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 30px 0;
+    color: #999;
+  }
+
+  .login-separator::before,
+  .login-separator::after {
+    content: "";
+    flex-grow: 1;
+    background-color: #ddd;
+    height: 1px;
+    margin: 0 15px;
+  }
+
+  .social-login button {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .btn-social.google {
+    color: #db4437;
+    background-color: white;
+  }
+
+  .btn-social.facebook {
+    color: white;
+    background-color: #3b5998;
+  }
+
+  .signup-prompt {
+    margin-top: 30px;
+    font-size: 14px;
+    color: #777;
+  }
+
+  .signup-prompt a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .login-footer {
+    text-align: center;
+    padding: 15px;
+    color: #777;
+    font-size: 12px;
+    margin-top: 20px;
+  }
+
+  /* Ini untuk wadah/list utama dari pesan */
+  .flash-messages {
+    list-style: none;
+    /* Menghilangkan bullet points */
+    padding: 0;
+    /* Menghilangkan padding default */
+    margin: 0 0 1rem 0;
+    /* Memberi jarak bawah sebelum judul */
+  }
+
+  /* Ini untuk setiap item/pesan di dalamnya */
+  .flash-messages li {
+    padding: 1rem;
+    /* Memberi ruang di dalam kotak pesan */
+    border-radius: 5px;
+    /* Memberi sudut yang sedikit melengkung */
+    color: white;
+    /* Warna teks default untuk semua pesan */
+    margin-bottom: 10px;
+    /* Memberi jarak antar pesan jika ada lebih dari satu */
+    font-weight: 500;
+  }
+
+  /* Untuk pesan sukses (cth: flash('Pesan..', 'success')) */
+  .flash-success {
+    background-color: #28a745;
+    /* Hijau */
+  }
+
+  /* Untuk pesan error/bahaya (cth: flash('Pesan..', 'danger')) */
+  .flash-danger {
+    background-color: #dc3545;
+    /* Merah */
+  }
+
+  /* (Opsional) Tambahan untuk kategori lain jika Anda membutuhkannya */
+  .flash-warning {
+    background-color: #ffc107;
+    /* Kuning */
+    color: #333;
+    /* Warna teks gelap agar terbaca di atas kuning */
+  }
+
+  .flash-info {
+    background-color: #17a2b8;
+    /* Biru */
+  }
+
+  /* Media Query untuk Mobile */
+  /* --- Media Query untuk Ponsel (Layout seperti di gambar) --- */
+  @media (max-width: 768px) {
+    .login-page-wrapper {
+      padding: 0;
+      align-items: stretch;
+      /* Biarkan container mengisi penuh tinggi layar */
+    }
+
+    body {
+      /* Latar belakang halaman menjadi putih bersih di mode mobile */
+      background-color: #fff;
+    }
+
+    .login-container {
+      display: flex;
+      width: 100%;
+      background-color: white;
+      overflow: hidden;
+    }
+
+    /* PERBAIKAN UTAMA: Tampilkan kembali .login-left */
+    .login-left {
+      display: flex;
+      /* Pastikan elemen ini ditampilkan */
+      flex: 0 0 35vh;
+      /* Tinggi panel gambar adalah 35% dari tinggi layar */
+      border-radius: 0 0 30px 30px;
+      /* Sudut melengkung hanya di bagian bawah */
+      overflow: hidden;
+    }
+
+    .login-right {
+      background-color: #fff;
+      border-radius: 30px 30px 0 0;
+      /* Sudut melengkung hanya di bagian atas */
+      margin-top: -25px;
+      /* Form menumpuk sedikit di atas gambar untuk efek visual */
+      position: relative;
+      z-index: 2;
+      /* Pastikan form berada di atas panel gambar */
+      padding: 30px;
+      /* Atur padding */
+      display: block;
+      /* Hapus flex agar konten bisa di-scroll jika panjang */
+    }
+
+    .login-form-wrapper {
+      margin: 0;
+      max-width: 100%;
+    }
+
+    .login-footer {
+      display: block;
+      /* Tampilkan kembali footer */
+      background-color: #fff;
+      padding: 0 20px 20px 20px;
+      color: #aaa;
+    }
+  }
+
+  /* --- Tablet (Portrait) & Ponsel Besar (Landscape) --- */
+  @media (max-width: 992px) {
+    .login-container {
+      flex-direction: column;
+      /* Ubah layout jadi vertikal */
+      max-width: 500px;
+      /* Batasi lebar agar tidak terlalu besar di tablet */
+    }
+
+    .login-left {
+      flex: 0 0 250px;
+      /* Beri tinggi tetap untuk panel video */
+    }
+
+    .login-right {
+      padding: 40px;
+    }
+  }
+
+  /* --- Ponsel (Portrait) --- */
+
+  /* --- Ponsel Terkecil --- */
+  @media (max-width: 480px) {
+    .login-form-wrapper {
+      padding: 25px;
+    }
+
+    .login-form-wrapper h1 {
+      font-size: 1.8rem;
+    }
+
+    .login-form-wrapper p,
+    .form-group input,
+    .btn-primary,
+    .social-login button {
+      font-size: 0.95rem;
+    }
+  }
