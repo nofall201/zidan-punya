@@ -1,3 +1,6 @@
+setuptools==68.2.2
+wheel
+
 alembic
 beautifulsoup4
 email_validator
