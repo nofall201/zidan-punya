@@ -1,5 +1,41 @@
-# Abaikan file model besar
+# ⚠️ JANGAN upload file model besar
 idbert/model.safetensors
 .env
+# Cache dan file Python yang tidak perlu
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# File virtual environment
+venv/
+.env
+.env.*
+
+# File konfigurasi/secret pribadi
+*.secret
+*.token
+
+# File sistem / OS
+.DS_Store
+Thumbs.db
+
+# File database lokal (jika ada)
+*.sqlite
+*.db
+
+# Folder hasil eksperimen, logs, dsb
+logs/
+checkpoints/
+runs/
+
+# File IDE/editor
+.vscode/
+.idea/
+
+# Node/npm (kalau pernah mix frontend)
+node_modules/
+
+# File sementara/deploy
+*.bak
+*.log
