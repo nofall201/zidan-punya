@@ -1,0 +1,5 @@
+# Abaikan file model besar
+idbert/model.safetensors
+.env
+__pycache__/
+*.pyc
