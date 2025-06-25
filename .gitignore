@@ -39,3 +39,5 @@ node_modules/
 # File sementara/deploy
 *.bak
 *.log
+runtime.txt
+

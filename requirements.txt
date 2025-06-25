@@ -1,13 +1,13 @@
 # Ultra-lightweight version - NO AI libraries
-gunicorn==21.2.0
-Flask==2.3.3
-flask_sqlalchemy==3.0.5
-flask_mail==0.9.1
-Flask_Cors==4.0.0
-email_validator==2.0.0
-python-dotenv==1.0.0
-requests==2.31.0
-beautifulsoup4==4.12.2
-toml==0.10.2
-nltk==3.8.1
-torch==2.1.2
+gunicorn
+Flask
+flask_sqlalchemy
+flask_mail
+Flask_Cors
+email_validator
+python-dotenv
+requests
+beautifulsoup4
+toml
+nltk
+torch
