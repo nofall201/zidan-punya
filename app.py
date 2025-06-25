@@ -1137,9 +1137,7 @@ def get_accuracy_by_label():
 # Menjalankan aplikasi jika file ini dieksekusi secara langsung
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Membuat tabel jika belum ada
-    app.run(debug=True, host='0.0.0.0', port=int(environ.get('PORT', 5000)))
-
-
-
+        db.create_all()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
 
